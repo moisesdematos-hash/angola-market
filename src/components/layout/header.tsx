@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
@@ -13,12 +13,17 @@ import {
   Menu,
   X,
   ChevronDown,
-  LogIn
+  LogIn,
+  Bell,
+  CheckCircle2,
+  ShieldCheck,
+  Zap
 } from 'lucide-react';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { useCart } from '@/context/cart-context';
 import { ANGOLA_PROVINCES } from '@/lib/constants/angola-data';
 import { MARKETPLACE_CATEGORIES } from '@/lib/constants/categories';
+import { PushNotificationService, PushNotificationPayload } from '@/lib/notifications/push-service';
 
 export function Header({ onOpenAIShopping }: { onOpenAIShopping?: () => void }) {
   const router = useRouter();
@@ -28,11 +33,40 @@ export function Header({ onOpenAIShopping }: { onOpenAIShopping?: () => void }) 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
 
+  // Notification states
+  const [notifications, setNotifications] = useState<PushNotificationPayload[]>([]);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [hasPermission, setHasPermission] = useState(false);
+
+  useEffect(() => {
+    setNotifications(PushNotificationService.getInitialNotifications());
+    if (typeof window !== 'undefined' && 'Notification' in window) {
+      setHasPermission(Notification.permission === 'granted');
+    }
+  }, []);
+
+  const handleRequestPermission = async () => {
+    const granted = await PushNotificationService.requestPermission();
+    setHasPermission(granted);
+    if (granted) {
+      PushNotificationService.sendNativeNotification(
+        '🔔 Alertas Activos!',
+        'ANGOLA MARKET enviará actualizações em tempo real das suas compras e vendas.'
+      );
+    }
+  };
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       router.push(`/search?q=${encodeURIComponent(searchQuery)}&province=${selectedProvince}`);
     }
+  };
+
+  const unreadCount = notifications.filter(n => !n.read).length;
+
+  const markAllRead = () => {
+    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
   };
 
   return (
@@ -137,7 +171,7 @@ export function Header({ onOpenAIShopping }: { onOpenAIShopping?: () => void }) 
             </button>
           </div>
 
-          {/* Action Tools: Theme, Prominent Auth Button, Cart */}
+          {/* Action Tools: Theme, Push Notifications, Account, Cart */}
           <div className="flex items-center gap-2 sm:gap-3">
             <button
               onClick={onOpenAIShopping}
@@ -148,6 +182,56 @@ export function Header({ onOpenAIShopping }: { onOpenAIShopping?: () => void }) 
             </button>
 
             <ThemeToggle />
+
+            {/* Notification Bell Panel */}
+            <div className="relative">
+              <button
+                onClick={() => setNotificationsOpen(!notificationsOpen)}
+                className="relative p-2 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                aria-label="Notificações"
+              >
+                <Bell className="w-5 h-5" />
+                {unreadCount > 0 && (
+                  <span className="absolute top-1 right-1 bg-amber-500 w-2.5 h-2.5 rounded-full ring-2 ring-white dark:ring-slate-900" />
+                )}
+              </button>
+
+              {/* Notification drop down */}
+              {notificationsOpen && (
+                <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl z-50 overflow-hidden text-xs">
+                  <div className="p-3 bg-slate-50 dark:bg-slate-800/80 font-bold border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                    <span>Notificações ({unreadCount})</span>
+                    <button onClick={markAllRead} className="text-[10px] text-emerald-600 font-extrabold hover:underline">
+                      Marcar lidas
+                    </button>
+                  </div>
+
+                  <div className="divide-y divide-slate-100 dark:divide-slate-800 max-h-60 overflow-y-auto">
+                    {notifications.map((n) => (
+                      <div key={n.id} className={`p-3 space-y-1 hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors ${!n.read ? 'bg-amber-500/5' : ''}`}>
+                        <div className="flex justify-between font-bold">
+                          <span>{n.title}</span>
+                          <span className="text-[9px] text-slate-400 font-normal">{n.timestamp}</span>
+                        </div>
+                        <p className="text-slate-500 dark:text-slate-400 text-[11px] leading-snug">{n.body}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  {!hasPermission && (
+                    <div className="p-2.5 bg-slate-900 text-slate-300 text-[10px] text-center border-t border-slate-800">
+                      <button
+                        onClick={handleRequestPermission}
+                        className="bg-amber-500 text-slate-950 font-extrabold px-3 py-1.5 rounded-lg w-full flex items-center justify-center gap-1 hover:bg-amber-400 transition-colors"
+                      >
+                        <Zap className="w-3.5 h-3.5 text-slate-950" />
+                        <span>Activar Alertas no Telemóvel/PC</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
 
             {/* Prominent Login / Register Button */}
             <Link
