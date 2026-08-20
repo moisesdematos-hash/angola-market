@@ -627,40 +627,114 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {/* ─── SECTION 6: API KEY CONFIGURATIONS ───────────────────────────── */}
+        {/* ─── SECTION 6: API KEY CONFIGURATIONS & PARTNER INTEGRATION ───────── */}
         {currentSection === 'apis' && (
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-6">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <h3 className="font-extrabold text-base flex items-center gap-2">
-                <Settings className="w-5 h-5 text-amber-500" /> Gestão de Chaves de API & Integrações
-              </h3>
-            </div>
+          <div className="space-y-6">
+            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-6">
+              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 className="font-extrabold text-base flex items-center gap-2">
+                  <Settings className="w-5 h-5 text-amber-500" /> Gestão de Chaves de API & Integrações
+                </h3>
+              </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {apis.map((api) => (
-                <div key={api.name} className="bg-slate-950 p-4 rounded-2xl border border-slate-800 flex flex-col justify-between space-y-3">
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        {api.type === 'db' && <Database className="w-4 h-4 text-blue-400" />}
-                        {api.type === 'ai' && <Zap className="w-4 h-4 text-amber-400" />}
-                        {api.type === 'logistics' && <Truck className="w-4 h-4 text-emerald-400" />}
-                        {api.type === 'communication' && <MessageSquare className="w-4 h-4 text-purple-400" />}
-                        <h4 className="font-bold text-xs text-white">{api.name}</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {apis.map((api) => (
+                  <div key={api.name} className="bg-slate-950 p-4 rounded-2xl border border-slate-800 flex flex-col justify-between space-y-3">
+                    <div className="flex items-start justify-between">
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          {api.type === 'db' && <Database className="w-4 h-4 text-blue-400" />}
+                          {api.type === 'ai' && <Zap className="w-4 h-4 text-amber-400" />}
+                          {api.type === 'logistics' && <Truck className="w-4 h-4 text-emerald-400" />}
+                          {api.type === 'communication' && <MessageSquare className="w-4 h-4 text-purple-400" />}
+                          <h4 className="font-bold text-xs text-white">{api.name}</h4>
+                        </div>
+                        <span className="text-[10px] text-slate-500 font-mono block truncate max-w-[280px]">
+                          Chave: {api.keyMask}
+                        </span>
                       </div>
-                      <span className="text-[10px] text-slate-500 font-mono block truncate max-w-[280px]">
-                        Chave: {api.keyMask}
+
+                      <span className={`px-2 py-0.5 rounded text-[9px] font-extrabold uppercase ${
+                        api.status === 'connected' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-purple-500/20 text-purple-400 border border-purple-500/30'
+                      }`}>
+                        {api.status === 'connected' ? 'Activo' : 'Simulado'}
                       </span>
                     </div>
-
-                    <span className={`px-2 py-0.5 rounded text-[9px] font-extrabold uppercase ${
-                      api.status === 'connected' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-purple-500/20 text-purple-400 border border-purple-500/30'
-                    }`}>
-                      {api.status === 'connected' ? 'Activo' : 'Simulado'}
-                    </span>
                   </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Partner API Onboarding Form */}
+            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-4">
+              <div className="border-b border-slate-800 pb-3">
+                <h3 className="font-extrabold text-sm text-white flex items-center gap-2">
+                  <Link href="#" className="text-amber-500">🔗 Registo de Nova API Parceira (Integração Externa)</Link>
+                </h3>
+                <p className="text-[11px] text-slate-400 mt-1">
+                  Permite que outras empresas em Angola (Fintechs, Bancos, ERPs, Lojas de Retalho) integrem o seu catálogo ou sistemas de pagamento ao ANGOLA MARKET.
+                </p>
+              </div>
+
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  alert('🔑 Integração de API Parceira registada com sucesso! As credenciais de acesso OAuth foram geradas e enviadas para o email do parceiro.');
+                }}
+                className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs"
+              >
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-400">Nome da Empresa / Parceiro *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Ex: Banco de Fomento Angola (BFA)"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 outline-none focus:ring-1 focus:ring-amber-500 text-slate-100"
+                  />
                 </div>
-              ))}
+
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-400">Tipo de Integração *</label>
+                  <select
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 outline-none text-slate-300"
+                  >
+                    <option value="payments">Fintech / Gateway de Pagamentos Angolano</option>
+                    <option value="logistics">Empresa de Entrega / Distribuição local</option>
+                    <option value="erp">Sincronização de Inventário & Stock ERP</option>
+                    <option value="marketing">Afiliados & Promoção de Produtos</option>
+                  </select>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-400">Webhook URL (Notificações em tempo real) *</label>
+                  <input
+                    type="url"
+                    required
+                    placeholder="https://api.parceiro.ao/webhook"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 outline-none focus:ring-1 focus:ring-amber-500 text-slate-100 font-mono"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="font-bold text-slate-400">Email do Responsável Técnico *</label>
+                  <input
+                    type="email"
+                    required
+                    placeholder="tecnico@empresa.ao"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 outline-none focus:ring-1 focus:ring-amber-500 text-slate-100"
+                  />
+                </div>
+
+                <div className="md:col-span-2 pt-2">
+                  <button
+                    type="submit"
+                    className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-extrabold px-5 py-3 rounded-xl transition-all shadow-md flex items-center gap-1.5"
+                  >
+                    <CheckCircle2 className="w-4 h-4 text-slate-950" />
+                    <span>Gerar Credenciais & Registar API Parceira</span>
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         )}
