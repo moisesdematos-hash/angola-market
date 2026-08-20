@@ -12,21 +12,56 @@ export interface SuperChatMessage {
   timestamp: string;
   isBlocked?: boolean;
   actionCard?: {
-    type: 'product_recommendation' | 'payment_reference' | 'tracking_timeline' | 'voice_note';
+    type: 'product_recommendation' | 'payment_reference' | 'tracking_timeline' | 'golden_key_checkout';
     data: any;
   };
 }
 
 export class SuperChatEngine {
   /**
-   * Processes Super Chat Slash Commands & AI Assistant Queries
-   * Commands: /pesquisar, /rastrear, /ajuda, /comprar, /vender
+   * CHAVE DE OURO: Direct 1-Click Golden Checkout inside Chat
    */
+  static generateGoldenKeyCheckout(product: Product): SuperChatMessage {
+    const orderNumber = `ORD-GOLD-${Math.floor(100000 + Math.random() * 900000)}`;
+    const originalPrice = product.promotional_price || product.price;
+    const goldenDiscountKz = Math.round(originalPrice * 0.10); // 10% Gold Discount
+    const finalTotalKz = originalPrice - goldenDiscountKz + 3500;
+    const pin = LogisticsEngine.generateDeliveryPin();
+
+    return {
+      id: `gold-${Date.now()}`,
+      conversationId: 'conv-1',
+      senderId: 'golden-key-bot',
+      senderName: '🔑 CHAVE DE OURO — CHECKOUT VIP IN-CHAT',
+      senderRole: 'super_ai',
+      text: `🏆 CHAVE DE OURO ATIVADA! O seu pedido VIP #${orderNumber} foi criado diretamente no Chat com 10% de Desconto Ouro e Retenção Escrow.`,
+      timestamp: new Date().toLocaleTimeString('pt-AO', { hour: '2-digit', minute: '2-digit' }),
+      actionCard: {
+        type: 'golden_key_checkout',
+        data: {
+          orderNumber,
+          productTitle: product.title,
+          originalPriceKz: originalPrice,
+          goldenDiscountKz,
+          finalTotalKz,
+          mcxEntity: '00124',
+          mcxReference: `${Math.floor(100 + Math.random() * 900)} ${Math.floor(100 + Math.random() * 900)} ${Math.floor(100 + Math.random() * 900)}`,
+          deliveryPin: pin,
+          courier: 'KargaGO Express (www.kargago.com)'
+        }
+      }
+    };
+  }
+
   static async processCommand(input: string, conversationId: string): Promise<SuperChatMessage | null> {
     const trimmed = input.trim();
     const timestamp = new Date().toLocaleTimeString('pt-AO', { hour: '2-digit', minute: '2-digit' });
 
-    // 1. /pesquisar [termo]
+    // Golden Key Trigger
+    if (trimmed.toLowerCase().includes('/ouro') || trimmed.toLowerCase().includes('chave de ouro') || trimmed.toLowerCase().includes('/gold')) {
+      return this.generateGoldenKeyCheckout(MOCK_PRODUCTS[0]);
+    }
+
     if (trimmed.toLowerCase().startsWith('/pesquisar') || trimmed.toLowerCase().startsWith('/buscar')) {
       const query = trimmed.replace(/\/pesquisar|\/buscar/gi, '').trim();
       const res = await GroqAIService.processShoppingQuery(query || 'telemóveis');
@@ -47,7 +82,6 @@ export class SuperChatEngine {
       };
     }
 
-    // 2. /rastrear [codigo]
     if (trimmed.toLowerCase().startsWith('/rastrear') || trimmed.toLowerCase().startsWith('/track')) {
       const code = trimmed.replace(/\/rastrear|\/track/gi, '').trim() || 'AO-DEL-948120';
       const trackingData = LogisticsEngine.getTrackingInfo(code);
@@ -67,7 +101,6 @@ export class SuperChatEngine {
       };
     }
 
-    // 3. /pagar ou /mcx
     if (trimmed.toLowerCase().startsWith('/pagar') || trimmed.toLowerCase().startsWith('/mcx')) {
       return {
         id: `super-${Date.now()}`,
@@ -86,20 +119,6 @@ export class SuperChatEngine {
             status: 'Aguardando Pagamento em Escrow'
           }
         }
-      };
-    }
-
-    // 4. Natural AI query fallback inside Super Chat
-    if (trimmed.toLowerCase().includes('ajuda') || trimmed.toLowerCase().includes('como') || trimmed.length > 15) {
-      const res = await GroqAIService.processShoppingQuery(trimmed);
-      return {
-        id: `super-${Date.now()}`,
-        conversationId,
-        senderId: 'super-ai-bot',
-        senderName: '⚡ SUPER CHAT AI ASSISTANT',
-        senderRole: 'super_ai',
-        text: `🤖 ${res.message}`,
-        timestamp
       };
     }
 
