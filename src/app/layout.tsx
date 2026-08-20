@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import { CartProvider } from '@/context/cart-context';
+import { ChatWidget } from '@/components/chat/chat-widget';
 
 export const metadata: Metadata = {
   title: 'ANGOLA MARKET — O marketplace onde Angola compra, vende e cresce',
@@ -28,6 +29,7 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <CartProvider>
             {children}
+            <ChatWidget />
           </CartProvider>
         </ThemeProvider>
       </body>
