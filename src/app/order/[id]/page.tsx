@@ -155,6 +155,16 @@ export default function OrderConfirmationPage() {
             <Download className="w-4 h-4" /> Descarregar PDF
           </button>
         </div>
+
+        {/* Back navigation */}
+        <div className="flex justify-center pt-2">
+          <Link
+            href="/shop"
+            className="bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs px-6 py-3.5 rounded-2xl transition-all"
+          >
+            ← Voltar para a Loja
+          </Link>
+        </div>
       </main>
 
       <Footer />

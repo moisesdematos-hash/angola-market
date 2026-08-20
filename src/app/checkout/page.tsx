@@ -337,6 +337,13 @@ export default function CheckoutPage() {
                 )}
               </button>
 
+              <Link
+                href="/cart"
+                className="w-full bg-slate-150 hover:bg-slate-200 bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs py-3.5 rounded-2xl transition-all flex items-center justify-center gap-2 mt-2 text-center"
+              >
+                ← Voltar ao Carrinho
+              </Link>
+
               <div className="text-[11px] text-slate-400 space-y-1">
                 <div className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-bold">
                   <ShieldCheck className="w-4 h-4" /> Garantia ANGOLA MARKET

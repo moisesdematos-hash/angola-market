@@ -181,7 +181,14 @@ export default function CartPage() {
                   <ArrowRight className="w-4 h-4" />
                 </button>
 
-                <div className="pt-2 text-[11px] text-slate-400 space-y-1">
+                <button
+                  onClick={() => router.push('/shop')}
+                  className="w-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs py-3 rounded-2xl transition-all flex items-center justify-center gap-2"
+                >
+                  <span>← Continuar a Comprar</span>
+                </button>
+
+                <div className="pt-2 text-[11px] text-slate-450">
                   <div className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-semibold">
                     <ShieldCheck className="w-3.5 h-3.5" /> Pagamento com Retenção Protegida em Escrow
                   </div>
