@@ -94,7 +94,20 @@ export function ChatWidget() {
     const currentInput = inputMessage;
     setInputMessage('');
 
-    const superResponse = await SuperChatEngine.processCommand(currentInput, selectedConvId);
+    let superResponse = null;
+    try {
+      const apiRes = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: currentInput, conversationId: selectedConvId })
+      });
+      const data = await apiRes.json();
+      if (data.success) {
+        superResponse = data.response;
+      }
+    } catch (err) {
+      console.error('Error sending message to Super Chat API:', err);
+    }
 
     if (superResponse) {
       setTimeout(() => {
