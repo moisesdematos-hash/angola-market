@@ -111,6 +111,26 @@ export default function DeveloperPortal() {
     setSandboxKey(key);
   };
 
+  const handleDownloadPlugin = () => {
+    const fileContent = `<?php
+/**
+ * Plugin Name: WooCommerce Angola Market Secure Escrow Gateway
+ * Description: Aceite pagamentos por referência Multicaixa Express e garanta retenção segura em Escrow no Angola Market.
+ * Version: 1.0.0
+ * Author: Angola Market Dev Team
+ */
+// API Endpoint Configuration: https://api.angolamarket.ao/v1/checkout
+`;
+    const blob = new Blob([fileContent], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'angola-market-woocommerce.php';
+    link.click();
+    URL.revokeObjectURL(url);
+    alert('📥 Download do plugin "angola-market-woocommerce.php" iniciado com sucesso!');
+  };
+
   const handleCopyKey = () => {
     if (sandboxKey) {
       navigator.clipboard.writeText(sandboxKey);
@@ -226,7 +246,7 @@ print(response.json())`;
               <span>Gerar Chave Sandbox (Gratuito)</span>
             </button>
             <button
-              onClick={() => alert('Download do plugin WordPress/WooCommerce Angola Market iniciado!')}
+              onClick={handleDownloadPlugin}
               className="bg-slate-850 hover:bg-slate-800 border border-slate-700 text-white font-bold text-xs px-5 py-3 rounded-xl transition-all flex items-center gap-1.5"
             >
               <Download className="w-4 h-4" />
