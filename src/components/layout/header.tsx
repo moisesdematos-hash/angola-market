@@ -12,7 +12,8 @@ import {
   Store,
   Menu,
   X,
-  ChevronDown
+  ChevronDown,
+  LogIn
 } from 'lucide-react';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { useCart } from '@/context/cart-context';
@@ -36,7 +37,7 @@ export function Header({ onOpenAIShopping }: { onOpenAIShopping?: () => void }) 
 
   return (
     <header className="sticky top-0 z-40 bg-white/95 dark:bg-[#131924]/95 backdrop-blur border-b border-slate-200 dark:border-slate-800 transition-colors">
-      {/* Top Banner for Sellers */}
+      {/* Top Banner for Sellers & Quick Auth */}
       <div className="bg-emerald-700 dark:bg-emerald-950 text-white text-xs py-1.5 px-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-2">
@@ -45,14 +46,19 @@ export function Header({ onOpenAIShopping }: { onOpenAIShopping?: () => void }) 
             </span>
             <span className="hidden sm:inline">Compre de milhares de vendedores em todas as 18 províncias.</span>
           </div>
-          <div className="flex items-center gap-4 text-emerald-100">
-            <Link href="/seller" className="hover:text-amber-300 transition-colors font-medium flex items-center gap-1">
+          <div className="flex items-center gap-4 text-emerald-100 font-medium">
+            <Link href="/seller" className="hover:text-amber-300 transition-colors flex items-center gap-1">
               <Store className="w-3.5 h-3.5" />
               <span>Vender no ANGOLA MARKET</span>
             </Link>
             <span className="text-emerald-500">|</span>
             <Link href="/track" className="hover:text-white transition-colors">
               Rastrear Pedido
+            </Link>
+            <span className="text-emerald-500">|</span>
+            <Link href="/login" className="hover:text-amber-300 font-bold transition-colors flex items-center gap-1">
+              <LogIn className="w-3.5 h-3.5" />
+              <span>Entrar / Registar</span>
             </Link>
           </div>
         </div>
@@ -124,14 +130,14 @@ export function Header({ onOpenAIShopping }: { onOpenAIShopping?: () => void }) 
             {/* AI Assistant Trigger Button */}
             <button
               onClick={onOpenAIShopping}
-              className="flex items-center gap-1.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 text-xs font-bold px-3 py-2 rounded-xl shadow-sm transition-all hover:scale-105"
+              className="flex items-center gap-1.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 text-xs font-bold px-3 py-2 rounded-xl shadow-sm transition-all hover:scale-105 shrink-0"
             >
               <Sparkles className="w-4 h-4 text-slate-950 animate-pulse" />
               <span>IA de Compras</span>
             </button>
           </div>
 
-          {/* Action Tools: Theme, Account, Cart */}
+          {/* Action Tools: Theme, Prominent Auth Button, Cart */}
           <div className="flex items-center gap-2 sm:gap-3">
             <button
               onClick={onOpenAIShopping}
@@ -143,12 +149,13 @@ export function Header({ onOpenAIShopping }: { onOpenAIShopping?: () => void }) 
 
             <ThemeToggle />
 
+            {/* Prominent Login / Register Button */}
             <Link
-              href="/account"
-              className="hidden sm:flex items-center gap-1.5 p-2 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-xs font-medium"
+              href="/login"
+              className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-emerald-600 hover:text-white dark:hover:bg-emerald-600 text-slate-900 dark:text-slate-100 px-3 py-2 rounded-xl text-xs font-extrabold transition-all border border-slate-200 dark:border-slate-700 shadow-sm"
             >
-              <User className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-              <span>Conta</span>
+              <User className="w-4 h-4 text-emerald-600 dark:text-emerald-400 group-hover:text-white" />
+              <span>Entrar / Criar Conta</span>
             </Link>
 
             <Link
@@ -247,20 +254,20 @@ export function Header({ onOpenAIShopping }: { onOpenAIShopping?: () => void }) 
 
           <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex flex-col gap-2">
             <Link
-              href="/seller"
+              href="/login"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center justify-center gap-2 bg-emerald-600 text-white font-bold py-2 rounded-xl text-sm"
-            >
-              <Store className="w-4 h-4" />
-              <span>Criar Loja / Vender no ANGOLA MARKET</span>
-            </Link>
-            <Link
-              href="/account"
-              onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center justify-center gap-2 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-medium py-2 rounded-xl text-sm"
+              className="flex items-center justify-center gap-2 bg-emerald-600 text-white font-bold py-2.5 rounded-xl text-sm"
             >
               <User className="w-4 h-4" />
-              <span>Minha Conta</span>
+              <span>Entrar na Minha Conta</span>
+            </Link>
+            <Link
+              href="/register"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center justify-center gap-2 bg-amber-500 text-slate-950 font-extrabold py-2.5 rounded-xl text-sm"
+            >
+              <Store className="w-4 h-4" />
+              <span>Registar / Vender no ANGOLA MARKET</span>
             </Link>
           </div>
         </div>
