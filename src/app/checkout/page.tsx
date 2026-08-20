@@ -11,6 +11,7 @@ import { useCart } from '@/context/cart-context';
 import { ANGOLA_PROVINCES, PAYMENT_METHODS } from '@/lib/constants/angola-data';
 import { PaymentAdapter, PaymentMethodType } from '@/lib/payments/payment-adapter';
 import { formatKwanza } from '@/lib/mock-data';
+import { WhatsAppService } from '@/lib/whatsapp/whatsapp-service';
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -52,6 +53,25 @@ export default function CheckoutPage() {
         amountKz: totalAmount,
         method: paymentMethod,
         customerPhone: phone
+      });
+
+      // Send WhatsApp Notification to Buyer (Multicaixa reference, Escrow details, and tracking link)
+      await WhatsAppService.sendWhatsAppNotification(phone, 'order_placed_buyer', {
+        buyerName: fullName,
+        orderNumber: orderId,
+        totalKz: formatKwanza(totalAmount),
+        mcxReference: paymentResult.paymentDetails.mcxReference || 'N/A',
+        trackingCode: orderId,
+        courier: 'KargaGO (www.kargago.com)'
+      });
+
+      // Send WhatsApp Notification to Seller (if seller details are available)
+      const sellerPhone = '+244923111222'; // Default mock seller contact
+      await WhatsAppService.sendWhatsAppNotification(sellerPhone, 'order_placed_seller', {
+        sellerName: 'Luanda Tech Center',
+        orderNumber: orderId,
+        productTitle: items[0]?.product.title || 'Artigo do Catálogo',
+        totalKz: formatKwanza(subtotalAmount)
       });
 
       // Clear cart
