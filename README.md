@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🇦🇴 ANGOLA MARKET — Marketplace E-Commerce Platform
 
-## Getting Started
+> "Compre de milhares de vendedores. Sem fronteiras, sem complicação."
 
-First, run the development server:
+ANGOLA MARKET é uma plataforma completa de marketplace digital e e-commerce para Angola, inspirada nos melhores conceitos de marketplaces globais e perfeitamente adaptada à realidade do comércio nacional angolano.
+
+A plataforma opera num modelo de **Zero-Stock (Estoque do Vendedor)**:
+`CLIENTE → ANGOLA MARKET → VENDEDOR → LOGÍSTICA → CLIENTE`
+
+---
+
+## 🚀 Funcionalidades Principais
+
+- **Landing Page & Pesquisa Inteligente**: Hero interativo com pesquisa direta por províncias, filtros por localização (Luanda, Benguela, Huambo, Cabinda, etc.) e ofertas do dia.
+- **Modo Claro / Escuro (Light & Dark Mode)**: Sistema de temas adaptativo com `next-themes` e tokens Tailwind CSS v4 para ecrãs OLED em mobile e desktop.
+- **ANGOLA AI SHOPPING ASSISTANT**: Assistente virtual integrado com Groq API (Llama 3 70B) para interpretação de orçamentos e intenção em português de Angola sem alucinação de catálogo.
+- **AI SELLER COPILOT**: Ferramenta de inteligência artificial para apoio a vendedores na geração de títulos, descrições profissionais, tags e SEO.
+- **Angola Seller Score (0-100)**: Algoritmo de classificação de reputação de vendedores baseado em avaliações, tempo de resposta, devoluções e taxa de cumprimento.
+- **Pagamentos Protegidos (Escrow)**: Suporte a Multicaixa Express (MCX) com geração instantânea de entidade e referência, transferência bancária (IBAN) e Pagamento na Entrega (COD), com fundos retidos até confirmação por PIN.
+- **Logística Integrada & Track Order**: Rastreamento de entregas com cronograma em tempo real, estafetas independentes e confirmação por PIN.
+- **Faturas e Recibos Digitais**: Emissão de faturas/recibos em PDF com NIF para conformidade fiscal.
+- **Painel Administrativo & Moderador**: Gestão de GMV, receitas, aprovação de documentos NIF de vendedores e mediação de disputas no Resolution Center.
+
+---
+
+## 🛠️ Stack Tecnológica
+
+- **Frontend**: Next.js 15+ (App Router), React 19, TypeScript, Tailwind CSS v4, `next-themes`, Lucide React Icons.
+- **Backend & APIs**: Next.js Server Actions & API Routes (REST/JSON).
+- **Banco de Dados & Auth**: Supabase (PostgreSQL schema com Row Level Security - RLS, Supabase Auth com suporte a convidado e sessões persistentes).
+- **IA**: Groq API (`llama-3.3-70b-versatile`).
+- **Deploy**: Preparado para Vercel.
+
+---
+
+## ⚡ Como Executar o Projeto
 
 ```bash
+# 1. Instalar dependências
+npm install
+
+# 2. Configurar variáveis de ambiente
+cp .env.example .env.local
+
+# 3. Executar o servidor de desenvolvimento
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Abra [http://localhost:3000](http://localhost:3000) no seu navegador.
