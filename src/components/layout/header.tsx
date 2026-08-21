@@ -105,7 +105,7 @@ export function Header({ onOpenAIShopping }: { onOpenAIShopping?: () => void }) 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      router.push(`/search?q=${encodeURIComponent(searchQuery)}&province=${selectedProvince}`);
+      router.push(`/shop?q=${encodeURIComponent(searchQuery)}&province=${selectedProvince}`);
     }
   };
 

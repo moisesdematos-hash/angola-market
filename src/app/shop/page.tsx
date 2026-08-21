@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, Suspense } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import {
   Filter,
   Search,
@@ -21,17 +22,27 @@ import { ANGOLA_PROVINCES } from '@/lib/constants/angola-data';
 import { MOCK_PRODUCTS, formatKwanza } from '@/lib/mock-data';
 import { useCart } from '@/context/cart-context';
 
-export default function ShopPage() {
+function ShopContent() {
   const { addToCart } = useCart();
   const [aiModalOpen, setAiModalOpen] = useState(false);
+  const searchParams = useSearchParams();
+
+  const qParam = searchParams.get('q') || '';
+  const provinceParam = searchParams.get('province') || 'all';
 
   // Filters state
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState(qParam);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [selectedProvince, setSelectedProvince] = useState<string>('all');
+  const [selectedProvince, setSelectedProvince] = useState<string>(provinceParam);
   const [onlyVerifiedSellers, setOnlyVerifiedSellers] = useState(false);
   const [maxPrice, setMaxPrice] = useState<number>(2000000);
   const [sortBy, setSortBy] = useState<'relevance' | 'price_asc' | 'price_desc' | 'rating'>('relevance');
+
+  // Synchronize state when URL query params change
+  useEffect(() => {
+    setSearchQuery(qParam);
+    setSelectedProvince(provinceParam);
+  }, [qParam, provinceParam]);
 
   // Filter products
   const filteredProducts = useMemo(() => {
@@ -99,88 +110,72 @@ export default function ShopPage() {
             </p>
           </div>
 
-          <div className="flex items-center gap-3 w-full sm:w-auto">
-            <div className="flex items-center gap-2 text-xs font-semibold text-slate-600 dark:text-slate-300">
-              <SlidersHorizontal className="w-4 h-4 text-emerald-600" />
-              <span>Ordenar:</span>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as any)}
-                className="bg-slate-100 dark:bg-slate-800 border-none rounded-xl px-3 py-1.5 text-xs text-slate-900 dark:text-white font-bold outline-none cursor-pointer"
-              >
-                <option value="relevance">Mais Relevantes</option>
-                <option value="price_asc">Menor Preço</option>
-                <option value="price_desc">Maior Preço</option>
-                <option value="rating">Melhor Avaliação</option>
-              </select>
-            </div>
+          <div className="flex items-center gap-2 text-xs font-bold w-full sm:w-auto">
+            <span className="text-slate-500 shrink-0">Ordenar por:</span>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as any)}
+              className="bg-slate-100 dark:bg-slate-850 border border-slate-250 dark:border-slate-750 px-3 py-2 rounded-xl text-xs font-bold outline-none text-slate-700 dark:text-slate-200 cursor-pointer w-full sm:w-auto"
+            >
+              <option value="relevance">Relevância</option>
+              <option value="price_asc">Preço: Baixo para Alto</option>
+              <option value="price_desc">Preço: Alto para Baixo</option>
+              <option value="rating">Melhor Avaliação</option>
+            </select>
           </div>
         </div>
 
-        {/* Content Layout: Sidebar Filters + Products Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* Sidebar Filters */}
+          {/* Left Column: Filters Sidebar */}
           <aside className="lg:col-span-3 space-y-6">
-            <div className="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-6 shadow-sm">
-              <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-                <span className="font-extrabold text-sm flex items-center gap-2">
-                  <Filter className="w-4 h-4 text-emerald-600" /> Filtros de Pesquisa
-                </span>
-                <button
-                  onClick={() => {
-                    setSelectedCategory('all');
-                    setSelectedProvince('all');
-                    setOnlyVerifiedSellers(false);
-                    setMaxPrice(2000000);
-                    setSearchQuery('');
-                  }}
-                  className="text-[11px] font-bold text-emerald-600 hover:underline"
-                >
-                  Limpar
-                </button>
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 space-y-5 shadow-sm">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+                <h3 className="font-extrabold text-sm flex items-center gap-1.5">
+                  <SlidersHorizontal className="w-4 h-4 text-emerald-600" /> Filtros de Busca
+                </h3>
               </div>
 
-              {/* Text Search filter */}
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">Palavra-chave</label>
-                <div className="relative">
+              {/* Text Search inside filters */}
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-bold text-slate-400 uppercase">Procurar palavra-chave</label>
+                <div className="flex items-center border border-slate-300 dark:border-slate-700 rounded-xl overflow-hidden bg-slate-500/5 px-3">
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Ex: iPhone, LG, Nike..."
-                    className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-emerald-500"
+                    placeholder="Ex: Samsung, Gerador..."
+                    className="w-full py-2 bg-transparent border-none outline-none text-xs"
                   />
-                  <Search className="w-4 h-4 text-slate-400 absolute right-3 top-2.5" />
+                  <Search className="w-4 h-4 text-slate-400" />
                 </div>
               </div>
 
               {/* Category Filter */}
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">Categoria</label>
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-bold text-slate-400 uppercase">Categoria</label>
                 <select
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white outline-none cursor-pointer"
+                  className="w-full bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-750 px-3 py-2.5 rounded-xl text-xs outline-none cursor-pointer text-slate-700 dark:text-slate-350"
                 >
                   <option value="all">Todas as Categorias</option>
-                  {MARKETPLACE_CATEGORIES.map((c) => (
-                    <option key={c.id} value={c.name}>
-                      {c.name}
+                  {MARKETPLACE_CATEGORIES.map((cat) => (
+                    <option key={cat.id} value={cat.name}>
+                      {cat.name}
                     </option>
                   ))}
                 </select>
               </div>
 
-              {/* Location Province Filter */}
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">Província do Vendedor</label>
+              {/* Province Filter */}
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-bold text-slate-400 uppercase">Província de Origem</label>
                 <select
                   value={selectedProvince}
                   onChange={(e) => setSelectedProvince(e.target.value)}
-                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white outline-none cursor-pointer"
+                  className="w-full bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-750 px-3 py-2.5 rounded-xl text-xs outline-none cursor-pointer text-slate-700 dark:text-slate-355"
                 >
-                  <option value="all">Todas as 18 Províncias</option>
+                  <option value="all">Todas as Províncias</option>
                   {ANGOLA_PROVINCES.map((p) => (
                     <option key={p.id} value={p.name}>
                       {p.name}
@@ -189,11 +184,13 @@ export default function ShopPage() {
                 </select>
               </div>
 
-              {/* Price Range Filter */}
+              {/* Price Range */}
               <div className="space-y-2">
-                <div className="flex justify-between items-center text-xs">
-                  <label className="font-bold text-slate-700 dark:text-slate-300">Preço Máximo</label>
-                  <span className="font-extrabold text-emerald-600">{formatKwanza(maxPrice)}</span>
+                <div className="flex justify-between items-baseline">
+                  <label className="text-[11px] font-bold text-slate-400 uppercase">Preço Máximo</label>
+                  <span className="text-xs font-extrabold text-emerald-600 dark:text-emerald-400">
+                    {formatKwanza(maxPrice)}
+                  </span>
                 </div>
                 <input
                   type="range"
@@ -325,5 +322,17 @@ export default function ShopPage() {
       <Footer />
       <AIShoppingModal isOpen={aiModalOpen} onClose={() => setAiModalOpen(false)} />
     </div>
+  );
+}
+
+export default function ShopPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-[#0b0f17]">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600" />
+      </div>
+    }>
+      <ShopContent />
+    </Suspense>
   );
 }
