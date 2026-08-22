@@ -1,4 +1,4 @@
-export type PaymentMethodType = 'mcx' | 'bank_transfer' | 'cod';
+export type PaymentMethodType = 'mcx' | 'bank_transfer' | 'paypay';
 
 export type EscrowStatus = 'pending' | 'escrow_locked' | 'released' | 'refunded' | 'failed';
 
@@ -56,13 +56,15 @@ export class PaymentAdapter {
       };
     }
 
-    // Cash on Delivery
+    // PayPay Angola
+    const paypayRef = `PP-${Math.floor(100000 + Math.random() * 900000)}`;
     return {
       success: true,
       transactionId,
       status: 'pending',
       paymentDetails: {
-        instructions: 'O pagamento será efetuado em numerário ou TPA no ato de entrega da encomenda pelo estafeta.'
+        mcxReference: paypayRef,
+        instructions: `Efetue o pagamento através da aplicação PayPay Angola inserindo o código de pagamento ${paypayRef} ou enviando para o telemóvel +244 923 111 222.`
       },
       timestamp: new Date().toISOString()
     };

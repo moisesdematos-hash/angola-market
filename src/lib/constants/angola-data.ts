@@ -275,9 +275,9 @@ export const PAYMENT_METHODS = [
     icon: "Building2"
   },
   {
-    id: "cod",
-    name: "Pagamento na Entrega",
-    description: "Pague em numerário ou TPA no momento da receção da sua encomenda.",
-    icon: "Banknote"
+    id: "paypay",
+    name: "PayPay Angola",
+    description: "Pagamento rápido e seguro via carteira digital ou QR Code PayPay.",
+    icon: "Wallet"
   }
 ];

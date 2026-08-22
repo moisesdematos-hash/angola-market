@@ -97,13 +97,19 @@ export default function OrderConfirmationPage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center text-xs">
-            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
-              <span className="text-slate-400 font-bold uppercase">Entidade</span>
-              <div className="text-lg font-extrabold text-slate-900 dark:text-white font-mono">00124</div>
-            </div>
+            {!mcxRef.startsWith('PP-') && (
+              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
+                <span className="text-slate-400 font-bold uppercase">Entidade</span>
+                <div className="text-lg font-extrabold text-slate-900 dark:text-white font-mono">00124</div>
+              </div>
+            )}
 
-            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 relative">
-              <span className="text-slate-400 font-bold uppercase">Referência de Pagamento</span>
+            <div className={`p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 relative ${
+              mcxRef.startsWith('PP-') ? 'sm:col-span-2' : ''
+            }`}>
+              <span className="text-slate-400 font-bold uppercase">
+                {mcxRef.startsWith('PP-') ? 'Referência PayPay Angola' : 'Referência de Pagamento'}
+              </span>
               <div className="text-lg font-extrabold text-emerald-600 dark:text-emerald-400 font-mono">
                 {mcxRef}
               </div>

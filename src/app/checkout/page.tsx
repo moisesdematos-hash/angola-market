@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ShieldCheck, MapPin, CreditCard, Building2, Smartphone, Banknote, ArrowRight, CheckCircle2, ChevronRight } from 'lucide-react';
+import { ShieldCheck, MapPin, CreditCard, Building2, Smartphone, Wallet, ArrowRight, CheckCircle2, ChevronRight } from 'lucide-react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { AIShoppingModal } from '@/components/ai/ai-shopping-modal';
@@ -260,7 +260,7 @@ export default function CheckoutPage() {
                     <div className="flex items-center justify-between">
                       {pm.id === 'mcx' && <Smartphone className="w-6 h-6 text-emerald-600" />}
                       {pm.id === 'bank_transfer' && <Building2 className="w-6 h-6 text-emerald-600" />}
-                      {pm.id === 'cod' && <Banknote className="w-6 h-6 text-amber-500" />}
+                      {pm.id === 'paypay' && <Wallet className="w-6 h-6 text-emerald-600" />}
 
                       <input
                         type="radio"
@@ -288,6 +288,17 @@ export default function CheckoutPage() {
                   </p>
                   <p className="text-slate-600 dark:text-slate-300">
                     Ao confirmar o pedido, será gerada instantaneamente uma Entidade e Referência Multicaixa para pagar via aplicativo ou caixa eletrónico.
+                  </p>
+                </div>
+              )}
+
+              {paymentMethod === 'paypay' && (
+                <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/50 text-xs space-y-2">
+                  <p className="font-bold text-emerald-800 dark:text-emerald-300">
+                    Instrução PayPay Angola:
+                  </p>
+                  <p className="text-slate-600 dark:text-slate-300">
+                    Ao confirmar o pedido, será gerada uma referência de fatura PayPay. Transfira o valor seguro via app PayPay Angola e a custódia será ativada automaticamente.
                   </p>
                 </div>
               )}
