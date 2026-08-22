@@ -59,6 +59,9 @@ export default function SellerCenterPage() {
               <span className="bg-emerald-600 text-white font-bold text-[10px] uppercase px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow">
                 <ShieldCheck className="w-3.5 h-3.5" /> Verified Seller
               </span>
+              <span className="bg-amber-500 text-slate-950 font-extrabold text-[10px] uppercase px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow">
+                <Award className="w-3.5 h-3.5" /> Soba Grande
+              </span>
               <span className="text-xs text-slate-400 font-medium">NIF: 5410948120</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">Painel do Vendedor — Luanda Tech Center</h1>
