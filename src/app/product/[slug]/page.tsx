@@ -32,6 +32,10 @@ export default function ProductDetailPage() {
   const [aiModalOpen, setAiModalOpen] = useState(false);
   const [pechinchaModalOpen, setPechinchaModalOpen] = useState(false);
 
+  // Desapego states
+  const [desapegoTimePassed, setDesapegoTimePassed] = useState(0);
+  const [desapegoToast, setDesapegoToast] = useState(false);
+
   const slug = typeof params.slug === 'string' ? params.slug : '';
   const product = MOCK_PRODUCTS.find((p) => p.slug === slug) || MOCK_PRODUCTS[0];
 
@@ -40,16 +44,19 @@ export default function ProductDetailPage() {
   const [quantity, setQuantity] = useState(1);
   const [addedToast, setAddedToast] = useState(false);
 
-  const finalPrice = selectedVariant ? selectedVariant.price : (product.promotional_price || product.price);
+  const basePrice = selectedVariant ? selectedVariant.price : (product.promotional_price || product.price);
+  const finalPrice = Math.max(basePrice * (1 - desapegoTimePassed * 0.05), basePrice * 0.85);
 
   const handleAddToCart = () => {
-    addToCart(product, quantity, selectedVariant?.id, selectedVariant?.name);
+    const activePrice = desapegoTimePassed > 0 ? finalPrice : undefined;
+    addToCart(product, quantity, selectedVariant?.id, selectedVariant?.name, activePrice);
     setAddedToast(true);
     setTimeout(() => setAddedToast(false), 3000);
   };
 
   const handleBuyNow = () => {
-    addToCart(product, quantity, selectedVariant?.id, selectedVariant?.name);
+    const activePrice = desapegoTimePassed > 0 ? finalPrice : undefined;
+    addToCart(product, quantity, selectedVariant?.id, selectedVariant?.name, activePrice);
     router.push('/checkout');
   };
 
@@ -77,6 +84,8 @@ export default function ProductDetailPage() {
   });
   const [kixikilaSuccess, setKixikilaSuccess] = useState(false);
   const [kixikilaSimulating, setKixikilaSimulating] = useState(false);
+
+
 
   const simulateKixikilaPayments = () => {
     setKixikilaSimulating(true);
@@ -496,6 +505,76 @@ export default function ProductDetailPage() {
           {referralToast && (
             <div className="p-3 rounded-xl bg-emerald-600 text-white text-xs font-bold text-center animate-fade-in shadow-md">
               🎉 Sucesso! O teu amigo Manuel comprou o artigo. Ganhaste 2.000 Kz de saldo Angola Market!
+            </div>
+          )}
+        </div>
+
+        {/* Mercado do Desapego: Preço Decrescente */}
+        <div className="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 space-y-6 shadow-sm relative overflow-hidden">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <span className="bg-amber-500 text-slate-950 font-extrabold text-[9px] uppercase px-2 py-0.5 rounded-full flex items-center gap-1 w-fit shadow">
+                🏷️ Desapego Activo
+              </span>
+              <h3 className="text-lg font-extrabold text-slate-900 dark:text-white flex items-center gap-1.5">
+                📉 Leilão Inverso: Preço Decrescente!
+              </h3>
+              <p className="text-xs text-slate-500 max-w-md">
+                Este é um artigo em formato Desapego. A cada 24 horas, o preço baixa automaticamente **5%** até atingir o limite mínimo do vendedor!
+              </p>
+            </div>
+
+            <div className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 rounded-2xl text-center shrink-0">
+              <span className="text-[9px] uppercase font-bold text-slate-400 dark:text-slate-500 block">Próxima Descida de Preço</span>
+              <span className="text-sm font-extrabold text-amber-500 font-mono animate-pulse block pt-0.5">
+                02h 44m 12s
+              </span>
+            </div>
+          </div>
+
+          <div className="bg-slate-50 dark:bg-slate-950/40 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 text-xs">
+            <span className="font-bold text-slate-700 dark:text-slate-350 block mb-3">Tabela de Desvalorização Planeada:</span>
+            <div className="grid grid-cols-4 gap-2 text-center text-[10px]">
+              <div className={`p-2.5 rounded-xl border ${desapegoTimePassed === 0 ? 'bg-amber-500/10 border-amber-500 font-bold text-amber-600' : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 text-slate-455 text-slate-400'}`}>
+                <span className="block uppercase text-[8px] font-bold">Dia 1 (Atual)</span>
+                <span className="font-mono">{formatKwanza(basePrice)}</span>
+              </div>
+              <div className={`p-2.5 rounded-xl border ${desapegoTimePassed === 1 ? 'bg-amber-500/10 border-amber-500 font-bold text-amber-600' : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 text-slate-455 text-slate-400'}`}>
+                <span className="block uppercase text-[8px] font-bold">Dia 2</span>
+                <span className="font-mono">{formatKwanza(basePrice * 0.95)}</span>
+              </div>
+              <div className={`p-2.5 rounded-xl border ${desapegoTimePassed === 2 ? 'bg-amber-500/10 border-amber-500 font-bold text-amber-600' : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 text-slate-455 text-slate-400'}`}>
+                <span className="block uppercase text-[8px] font-bold">Dia 3</span>
+                <span className="font-mono">{formatKwanza(basePrice * 0.90)}</span>
+              </div>
+              <div className={`p-2.5 rounded-xl border ${desapegoTimePassed === 3 ? 'bg-amber-500/10 border-amber-500 font-bold text-amber-600' : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 text-slate-455 text-slate-400'}`}>
+                <span className="block uppercase text-[8px] font-bold">Dia 4 (Mínimo)</span>
+                <span className="font-mono">{formatKwanza(basePrice * 0.85)}</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-3">
+            <button
+              type="button"
+              onClick={() => {
+                if (desapegoTimePassed < 3) {
+                  setDesapegoTimePassed(prev => prev + 1);
+                  setDesapegoToast(true);
+                  setTimeout(() => setDesapegoToast(false), 3000);
+                } else {
+                  alert('O preço já atingiu o limite mínimo definido pelo vendedor.');
+                }
+              }}
+              className="bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white font-extrabold text-xs px-5 py-3.5 rounded-xl transition-all shadow flex items-center justify-center gap-1.5"
+            >
+              <span>🧪 Simular Avanço de 24 Horas (-5%)</span>
+            </button>
+          </div>
+
+          {desapegoToast && (
+            <div className="p-3 rounded-xl bg-amber-500 text-slate-955 text-slate-900 text-xs font-bold text-center animate-fade-in shadow-md">
+              📉 Tempo avançado! O preço caiu para {formatKwanza(Math.max(basePrice * (1 - (desapegoTimePassed + 1) * 0.05), basePrice * 0.85))}. Adicione ao carrinho para comprar com este desconto!
             </div>
           )}
         </div>
