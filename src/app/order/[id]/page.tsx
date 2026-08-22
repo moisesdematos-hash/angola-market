@@ -29,6 +29,35 @@ export default function OrderConfirmationPage() {
   const [shippingFee, setShippingFee] = useState(Number(searchParams.get('shipping') || 3500));
   const [totalAmount, setTotalAmount] = useState(Number(searchParams.get('total') || 1253500));
 
+  // Ride Simulation states
+  const [simulatingRide, setSimulatingRide] = useState(false);
+  const [rideProgress, setRideProgress] = useState(0);
+  const [expressAlert, setExpressAlert] = useState(false);
+  const [expressAlertText, setExpressAlertText] = useState('');
+
+  const startRideSimulation = () => {
+    setSimulatingRide(true);
+    setRideProgress(0);
+    setExpressAlert(false);
+    
+    const interval = setInterval(() => {
+      setRideProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          setSimulatingRide(false);
+          setExpressAlertText(`Notificação KargaGO Express: O estafeta Kiluange Silva chegou à sua morada com o motociclo Yamaha 125cc! Apresente o seu PIN: ${trackingInfo.pinVerificationCode} para receber.`);
+          setExpressAlert(true);
+          return 100;
+        }
+        if (prev === 40) {
+          setExpressAlertText(`Notificação KargaGO Express: O estafeta Kiluange Silva passou pela Av. Fidel Castro e está a 5 minutos de distância.`);
+          setExpressAlert(true);
+        }
+        return prev + 10;
+      });
+    }, 450);
+  };
+
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
     setCopiedRef(true);
@@ -192,6 +221,65 @@ export default function OrderConfirmationPage() {
                 >
                   Confirmar Receção
                 </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* KargaGO Express Simulator */}
+        <div className="bg-slate-900 text-white border border-slate-800 rounded-3xl p-6 space-y-4 shadow-lg relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl animate-pulse" />
+          
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <span className="bg-emerald-600 text-white font-extrabold text-[9px] uppercase px-2 py-0.5 rounded-full flex items-center gap-1 w-fit shadow">
+                🛡️ Karga Segura Ativa
+              </span>
+              <h3 className="font-extrabold text-sm text-white flex items-center gap-1.5">
+                🛵 Simulador de Envio Express (KargaGO)
+              </h3>
+            </div>
+            <button
+              onClick={startRideSimulation}
+              disabled={simulatingRide}
+              className="bg-amber-500 hover:bg-amber-400 disabled:bg-slate-850 disabled:text-slate-500 text-slate-950 font-extrabold text-xs px-4 py-2.5 rounded-xl transition-all shadow self-start sm:self-center shrink-0"
+            >
+              {simulatingRide ? 'A Simular Envio...' : 'Simular Estafeta a Caminho'}
+            </button>
+          </div>
+
+          {/* Ride Progress Bar */}
+          {(simulatingRide || rideProgress > 0) && (
+            <div className="space-y-2 pt-2">
+              <div className="flex justify-between text-[10px] text-slate-400 font-bold">
+                <span>Armazém</span>
+                <span>Yamaha 125cc — Kiluange Silva</span>
+                <span>À tua porta</span>
+              </div>
+              <div className="relative w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                <div
+                  className="absolute top-0 left-0 h-full bg-gradient-to-r from-amber-500 to-emerald-500 rounded-full transition-all duration-300"
+                  style={{ width: `${rideProgress}%` }}
+                />
+              </div>
+              <div className="flex items-center gap-1 text-[11px] text-amber-400 font-mono">
+                <span className="animate-bounce">🛵</span>
+                <span>Progresso da Rota: {rideProgress}% {rideProgress === 100 ? '— Entregue!' : ''}</span>
+              </div>
+            </div>
+          )}
+
+          {/* Express Alert WhatsApp Notification Popup */}
+          {expressAlert && (
+            <div className="p-3.5 rounded-2xl bg-slate-850 border border-slate-700/60 flex items-start gap-3 animate-fade-in shadow">
+              <div className="w-8 h-8 rounded-full bg-[#25D366]/10 text-[#25D366] flex items-center justify-center shrink-0 font-bold">
+                💬
+              </div>
+              <div className="space-y-1">
+                <span className="text-[10px] text-emerald-400 font-extrabold uppercase">Notificação WhatsApp Express</span>
+                <p className="text-xs text-white leading-relaxed font-semibold">
+                  {expressAlertText}
+                </p>
               </div>
             </div>
           )}

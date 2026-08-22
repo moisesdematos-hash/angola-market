@@ -327,14 +327,19 @@ export default function ProductDetailPage() {
               </div>
             </div>
 
-            {/* Delivery Guarantee Info */}
-            <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500">
-              <span className="flex items-center gap-1 text-slate-700 dark:text-slate-300 font-semibold">
-                <Truck className="w-4 h-4 text-emerald-600" /> Entrega Rápida em {product.province}
-              </span>
-              <span className="flex items-center gap-1 text-amber-500 font-semibold">
-                <ShieldCheck className="w-4 h-4" /> Escrow Protegido MCX
-              </span>
+            {/* Delivery Guarantee Info - Selo Karga Segura */}
+            <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex flex-col gap-2 text-xs">
+              <div className="flex items-center justify-between text-slate-500">
+                <span className="flex items-center gap-1 text-slate-700 dark:text-slate-300 font-bold">
+                  <Truck className="w-4 h-4 text-emerald-600 animate-pulse" /> KargaGO Express ({product.province})
+                </span>
+                <span className="bg-emerald-600/10 text-emerald-600 dark:text-emerald-400 font-extrabold px-2 py-0.5 rounded flex items-center gap-1 shadow-sm text-[10px]">
+                  🛡️ KARGA SEGURA
+                </span>
+              </div>
+              <p className="text-[10px] text-slate-400 leading-relaxed">
+                *Entrega segurada contra extravio e danos. O seu pagamento fica guardado em custódia segura (Escrow) até confirmar a receção com o seu código PIN.
+              </p>
             </div>
           </div>
         </div>
