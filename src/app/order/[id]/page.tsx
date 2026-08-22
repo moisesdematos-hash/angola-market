@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { ShieldCheck, CheckCircle2, Truck, Copy, Download, MessageSquare, Clock, ChevronRight } from 'lucide-react';
+import { ShieldCheck, CheckCircle2, Truck, Copy, Download, MessageSquare, Clock, ChevronRight, Sparkles } from 'lucide-react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { AIShoppingModal } from '@/components/ai/ai-shopping-modal';
@@ -34,6 +34,32 @@ export default function OrderConfirmationPage() {
   const [rideProgress, setRideProgress] = useState(0);
   const [expressAlert, setExpressAlert] = useState(false);
   const [expressAlertText, setExpressAlertText] = useState('');
+
+  // Roda da Sorte states
+  const [wheelSpun, setWheelSpun] = useState(false);
+  const [spinning, setSpinning] = useState(false);
+  const [wheelRotation, setWheelRotation] = useState(0);
+  const [wonPrize, setWonPrize] = useState<string | null>(null);
+
+  const spinTheWheel = () => {
+    if (spinning || wheelSpun) return;
+    setSpinning(true);
+    const randomRotations = 1440 + Math.floor(Math.random() * 1440); 
+    setWheelRotation(randomRotations);
+
+    setTimeout(() => {
+      setSpinning(false);
+      setWheelSpun(true);
+      const prizes = [
+        'Desconto de 10% na próxima compra',
+        'Entrega Grátis para todo o país',
+        'Cupão de 2.000 Kz de Saldo Extra',
+        'Cashback de 5% garantido'
+      ];
+      const selectedPrize = prizes[Math.floor(Math.random() * prizes.length)];
+      setWonPrize(selectedPrize);
+    }, 3000);
+  };
 
   const startRideSimulation = () => {
     setSimulatingRide(true);
@@ -177,10 +203,60 @@ export default function OrderConfirmationPage() {
           </div>
 
           {orderStatus === 'completed' ? (
-            <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/50 text-xs text-emerald-800 dark:text-emerald-300 space-y-1 text-center animate-scale-in">
-              <p className="font-extrabold text-sm">🎉 Transação Concluída!</p>
-              <p>O seu PIN foi validado. O valor foi creditado de forma segura no IBAN do vendedor.</p>
-              <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1">Obrigado por utilizar o sistema de custódia do ANGOLA MARKET.</p>
+            <div className="space-y-4 animate-scale-in">
+              <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/50 text-xs text-emerald-800 dark:text-emerald-300 space-y-1 text-center">
+                <p className="font-extrabold text-sm">🎉 Transação Concluída!</p>
+                <p>O seu PIN foi validado. O valor foi creditado de forma segura no IBAN do vendedor.</p>
+              </div>
+
+              {/* Roda da Sorte Card */}
+              <div className="bg-slate-905 bg-slate-900 text-white rounded-2xl p-6 border border-slate-800 flex flex-col items-center text-center space-y-4 relative overflow-hidden shadow-lg">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl" />
+                
+                <span className="bg-amber-500 text-slate-950 font-extrabold text-[9px] uppercase px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow">
+                  <Sparkles className="w-3.5 h-3.5" /> RECOMPENSA DE FIDELIDADE
+                </span>
+                
+                <h3 className="font-extrabold text-sm text-white">🎡 Gira a Roda da Sorte Angola Market!</h3>
+                <p className="text-[11px] text-slate-400 max-w-xs">
+                  Por teres concluído a custódia com sucesso, tens um giro grátis para ganhar prémios imediatos!
+                </p>
+
+                {/* CSS Rotating Wheel Widget */}
+                <div className="relative w-36 h-36 rounded-full border-4 border-amber-500 flex items-center justify-center overflow-hidden bg-slate-950 shadow-inner">
+                  {/* Slices representation using lines */}
+                  <div className="absolute inset-0 bg-[conic-gradient(from_0deg,#10b981_0deg_90deg,#f59e0b_90deg_180deg,#3b82f6_180deg_270deg,#ec4899_270deg_360deg)] opacity-20" />
+                  
+                  {/* Simulated pointer needle */}
+                  <div className="absolute top-0 w-1 h-4 bg-amber-500 z-10 rounded-b" />
+                  
+                  {/* Spinning inner circle */}
+                  <div
+                    className="w-28 h-28 rounded-full border-2 border-dashed border-white/30 flex items-center justify-center font-bold text-[10px] text-white select-none transition-all"
+                    style={{
+                      transform: `rotate(${wheelRotation}deg)`,
+                      transition: spinning ? 'transform 3000ms cubic-bezier(0.1, 0.8, 0.1, 1)' : 'none'
+                    }}
+                  >
+                    <span>🎡 GIRA</span>
+                  </div>
+                </div>
+
+                {!wheelSpun ? (
+                  <button
+                    type="button"
+                    onClick={spinTheWheel}
+                    disabled={spinning}
+                    className="bg-amber-500 hover:bg-amber-400 disabled:bg-slate-800 disabled:text-slate-500 text-slate-950 font-extrabold text-xs px-6 py-3 rounded-xl transition-all shadow"
+                  >
+                    {spinning ? 'A Girar...' : 'Girar a Roda!'}
+                  </button>
+                ) : (
+                  <div className="p-3 rounded-xl bg-emerald-600 border border-emerald-500 text-white font-extrabold text-xs animate-bounce shadow">
+                    🎁 Prémio ganho: {wonPrize}!
+                  </div>
+                )}
+              </div>
             </div>
           ) : (
             <div className="space-y-4 text-xs">
