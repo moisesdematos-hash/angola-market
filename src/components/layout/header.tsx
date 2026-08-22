@@ -374,13 +374,22 @@ export function Header({ onOpenAIShopping }: { onOpenAIShopping?: () => void }) 
                 )}
               </div>
             ) : (
-              <Link
-                href="/login"
-                className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-emerald-600 hover:text-white dark:hover:bg-emerald-600 text-slate-900 dark:text-slate-100 px-3 py-2 rounded-xl text-xs font-extrabold transition-all border border-slate-200 dark:border-slate-700 shadow-sm"
-              >
-                <LogIn className="w-4 h-4 text-emerald-600 dark:text-emerald-400 group-hover:text-white" />
-                <span>Entrar / Criar Conta</span>
-              </Link>
+              <div className="flex items-center gap-2">
+                <Link
+                  href="/login"
+                  className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-emerald-650 hover:text-white dark:hover:bg-emerald-600 text-slate-900 dark:text-slate-100 px-3 py-2.5 rounded-xl text-xs font-extrabold transition-all border border-slate-200 dark:border-slate-700 shadow-sm"
+                >
+                  <LogIn className="w-4 h-4 text-emerald-600 dark:text-emerald-400 group-hover:text-white" />
+                  <span>Entrar</span>
+                </Link>
+                <Link
+                  href="/register"
+                  className="flex items-center gap-1.5 bg-amber-500 hover:bg-amber-600 text-slate-950 px-3 py-2.5 rounded-xl text-xs font-extrabold transition-all shadow-sm"
+                >
+                  <Store className="w-4 h-4 text-slate-950" />
+                  <span>Registar / Criar Loja</span>
+                </Link>
+              </div>
             )}
 
             <Link
