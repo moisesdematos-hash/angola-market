@@ -160,9 +160,14 @@ export default function CartPage() {
                     <span className="font-bold text-slate-900 dark:text-white">{formatKwanza(subtotalAmount)}</span>
                   </div>
 
-                  <div className="flex justify-between">
-                    <span>Taxa Estimada de Entrega</span>
-                    <span className="font-bold text-slate-900 dark:text-white">{formatKwanza(estimatedShipping)}</span>
+                  <div className="flex flex-col gap-0.5">
+                    <div className="flex justify-between">
+                      <span>Taxa Estimada de Entrega</span>
+                      <span className="font-bold text-slate-900 dark:text-white">{formatKwanza(estimatedShipping)}</span>
+                    </div>
+                    <span className="text-[9px] text-slate-450 dark:text-slate-400">
+                      *Taxa estimada para Luanda. Outras províncias serão calculadas no checkout.
+                    </span>
                   </div>
 
                   <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex justify-between items-baseline">

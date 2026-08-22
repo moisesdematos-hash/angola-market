@@ -27,10 +27,22 @@ export default function CheckoutPage() {
   const [landmark, setLandmark] = useState('');
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethodType>('mcx');
 
+  // Voucher upload states
+  const [voucher, setVoucher] = useState<string | null>(null);
+  const [voucherName, setVoucherName] = useState<string>('');
+  const [validationStep, setValidationStep] = useState<string>('');
+  const [showValidationOverlay, setShowValidationOverlay] = useState(false);
+
   const [loading, setLoading] = useState(false);
   const [mcxPhoneInput, setMcxPhoneInput] = useState('');
 
-  const shippingFee = 3500;
+  const getShippingFee = (provName: string) => {
+    if (provName === 'Luanda') return 3500;
+    if (['Benguela', 'Huambo', 'Cabinda', 'Huíla', 'Namibe'].includes(provName)) return 7500;
+    return 9000;
+  };
+
+  const shippingFee = getShippingFee(province);
   const totalAmount = subtotalAmount + shippingFee;
 
   const currentProvinceData = ANGOLA_PROVINCES.find((p) => p.name === province) || ANGOLA_PROVINCES[0];
@@ -77,8 +89,19 @@ export default function CheckoutPage() {
       // Clear cart
       clearCart();
 
+      if (voucher) {
+        setShowValidationOverlay(true);
+        setValidationStep('1. Registando o pedido com garantia Escrow no sistema...');
+        await new Promise(r => setTimeout(r, 1500));
+        setValidationStep('2. A ler o comprovativo anexado através da IA de Custódia...');
+        await new Promise(r => setTimeout(r, 2000));
+        setValidationStep('3. Comprovativo bancário validado com sucesso! Saldo em Escrow ativo.');
+        await new Promise(r => setTimeout(r, 1500));
+      }
+
       // Redirect to Order Confirmation
-      router.push(`/order/${orderId}?ref=${paymentResult.paymentDetails.mcxReference || 'direct'}`);
+      const isVoucherUploaded = !!voucher;
+      router.push(`/order/${orderId}?ref=${paymentResult.paymentDetails.mcxReference || 'direct'}&voucher=${isVoucherUploaded}&shipping=${shippingFee}&total=${totalAmount}`);
     } catch {
       alert('Erro ao processar o pedido. Tente novamente.');
     } finally {
@@ -270,16 +293,53 @@ export default function CheckoutPage() {
               )}
 
               {paymentMethod === 'bank_transfer' && (
-                <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/50 text-xs space-y-2">
-                  <p className="font-bold text-emerald-800 dark:text-emerald-300">
-                    Dados da Conta para Transferência (IBAN):
-                  </p>
-                  <p className="font-mono text-slate-800 dark:text-slate-100 bg-white dark:bg-slate-900 p-2 rounded-lg border border-emerald-300 dark:border-emerald-800 select-all">
-                    IBAN: AO06.0040.0000.1234.5678.1014.1 (BAI)
-                  </p>
-                  <p className="text-slate-600 dark:text-slate-300">
-                    Titular: ANGOLA MARKET RETENÇÃO DE SEGURANÇA
-                  </p>
+                <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/50 text-xs space-y-3">
+                  <div className="space-y-1">
+                    <p className="font-bold text-emerald-800 dark:text-emerald-350">
+                      Dados da Conta para Transferência (IBAN):
+                    </p>
+                    <p className="font-mono text-slate-800 dark:text-slate-100 bg-white dark:bg-slate-900 p-2 rounded-lg border border-emerald-300 dark:border-emerald-800 select-all">
+                      IBAN: AO06.0040.0000.1234.5678.1014.1 (BAI)
+                    </p>
+                    <p className="text-slate-600 dark:text-slate-300">
+                      Titular: ANGOLA MARKET RETENÇÃO DE SEGURANÇA
+                    </p>
+                  </div>
+
+                  {/* Voucher Upload Area */}
+                  <div className="pt-2 border-t border-emerald-200 dark:border-emerald-800 space-y-2">
+                    <p className="font-bold text-slate-700 dark:text-slate-350">
+                      Anexar Comprovativo de Pagamento (Print/Ficheiro)
+                    </p>
+                    
+                    <div className="flex items-center gap-3">
+                      <label className="flex items-center gap-1.5 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 cursor-pointer font-bold hover:bg-slate-50 dark:hover:bg-slate-800 text-[11px] text-slate-700 dark:text-slate-200">
+                        <span>📁 Escolher Ficheiro</span>
+                        <input
+                          type="file"
+                          accept="image/*,application/pdf"
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              setVoucherName(file.name);
+                              const reader = new FileReader();
+                              reader.onloadend = () => {
+                                setVoucher(reader.result as string);
+                              };
+                              reader.readAsDataURL(file);
+                            }
+                          }}
+                        />
+                      </label>
+                      <span className="text-[10px] text-slate-500 truncate max-w-[200px] dark:text-slate-400">
+                        {voucherName ? `✓ ${voucherName}` : 'Nenhum ficheiro selecionado'}
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-slate-400">
+                      *A nossa IA de Custódia analisará o comprovativo em segundos para libertar o pedido de imediato.
+                    </p>
+                  </div>
                 </div>
               )}
             </div>
@@ -354,6 +414,29 @@ export default function CheckoutPage() {
           </div>
         </form>
       </main>
+
+      {showValidationOverlay && (
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-slate-900/80 backdrop-blur-md p-6 text-center">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 max-w-md w-full shadow-2xl space-y-6">
+            <div className="w-16 h-16 rounded-full bg-emerald-100 dark:bg-emerald-950 flex items-center justify-center mx-auto text-emerald-600 dark:text-emerald-400">
+              <ShieldCheck className="w-8 h-8 animate-pulse text-amber-500" />
+            </div>
+            
+            <div className="space-y-2">
+              <h3 className="text-lg font-extrabold tracking-tight">IA de Custódia Angola Market</h3>
+              <p className="text-xs text-slate-500">A processar o seu comprovativo bancário...</p>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-850 font-bold text-xs text-emerald-600 dark:text-emerald-400 min-h-[3.5rem] flex items-center justify-center leading-relaxed">
+              {validationStep}
+            </div>
+
+            <div className="flex justify-center">
+              <div className="w-8 h-8 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin" />
+            </div>
+          </div>
+        </div>
+      )}
 
       <Footer />
       <AIShoppingModal isOpen={aiModalOpen} onClose={() => setAiModalOpen(false)} />

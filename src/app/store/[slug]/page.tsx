@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { Store, ShieldCheck, Award, MapPin, Star, Phone, ShoppingCart, ChevronRight } from 'lucide-react';
+import { Store, ShieldCheck, Award, MapPin, Star, Phone, ShoppingCart, ChevronRight, Check } from 'lucide-react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { AIShoppingModal } from '@/components/ai/ai-shopping-modal';
@@ -13,7 +13,7 @@ import { useCart } from '@/context/cart-context';
 
 export default function StorefrontPage() {
   const params = useParams();
-  const { addToCart } = useCart();
+  const { items, addToCart, removeFromCart } = useCart();
   const [aiModalOpen, setAiModalOpen] = useState(false);
 
   const slug = typeof params.slug === 'string' ? params.slug : '';
@@ -81,48 +81,78 @@ export default function StorefrontPage() {
           <h2 className="text-xl font-extrabold tracking-tight">Produtos da Loja</h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {displayProducts.map((prod) => (
-              <div
-                key={prod.id}
-                className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden hover:shadow-xl transition-all flex flex-col justify-between group"
-              >
-                <div>
-                  <div className="relative w-full h-48 bg-slate-100 dark:bg-slate-950 overflow-hidden">
-                    <Image
-                      src={prod.images[0]}
-                      alt={prod.title}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                  </div>
+            {displayProducts.map((prod) => {
+              const isInCart = items.some((item) => item.product.id === prod.id);
+              return (
+                <div
+                  key={prod.id}
+                  className={`bg-white dark:bg-slate-900 border rounded-3xl overflow-hidden hover:shadow-xl transition-all flex flex-col justify-between group ${
+                    isInCart
+                      ? 'border-emerald-500 ring-2 ring-emerald-500/20 dark:ring-emerald-500/15'
+                      : 'border-slate-200 dark:border-slate-800'
+                  }`}
+                >
+                  <div>
+                    <div className="relative w-full h-48 bg-slate-100 dark:bg-slate-950 overflow-hidden">
+                      <Image
+                        src={prod.images[0]}
+                        alt={prod.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
 
-                  <div className="p-4 space-y-2">
-                    <Link href={`/product/${prod.slug}`} className="font-extrabold text-sm text-slate-900 dark:text-white hover:text-emerald-600 line-clamp-2">
-                      {prod.title}
-                    </Link>
+                      {/* Photo area color overlay when selected */}
+                      {isInCart && (
+                        <div className="absolute inset-0 bg-emerald-950/40 backdrop-blur-[0.5px] flex items-center justify-center transition-all z-10">
+                          <span className="bg-emerald-600 text-white font-extrabold text-xs px-3 py-1.5 rounded-xl shadow-lg flex items-center gap-1">
+                            <Check className="w-3.5 h-3.5 text-white" /> Selecionado
+                          </span>
+                        </div>
+                      )}
+                    </div>
 
-                    <div className="flex items-center gap-1 text-[11px] text-slate-400">
-                      <MapPin className="w-3 h-3 text-emerald-500" />
-                      <span>{prod.province}, {prod.municipality}</span>
+                    <div className="p-4 space-y-2">
+                      <Link href={`/product/${prod.slug}`} className="font-extrabold text-sm text-slate-900 dark:text-white hover:text-emerald-600 line-clamp-2">
+                        {prod.title}
+                      </Link>
+
+                      <div className="flex items-center gap-1 text-[11px] text-slate-400">
+                        <MapPin className="w-3 h-3 text-emerald-500" />
+                        <span>{prod.province}, {prod.municipality}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="p-4 pt-0 border-t border-slate-100 dark:border-slate-800/60 mt-2 flex items-center justify-between">
-                  <span className="text-base font-extrabold text-emerald-600 dark:text-emerald-400">
-                    {formatKwanza(prod.promotional_price || prod.price)}
-                  </span>
+                  <div className="p-4 pt-0 border-t border-slate-100 dark:border-slate-800/60 mt-2 flex items-center justify-between">
+                    <span className="text-base font-extrabold text-emerald-600 dark:text-emerald-400">
+                      {formatKwanza(prod.promotional_price || prod.price)}
+                    </span>
 
-                  <button
-                    onClick={() => addToCart(prod)}
-                    className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3.5 py-2 rounded-xl transition-colors shadow flex items-center gap-1"
-                  >
-                    <ShoppingCart className="w-3.5 h-3.5" />
-                    <span>Comprar</span>
-                  </button>
+                    <button
+                      onClick={() => isInCart ? removeFromCart(prod.id) : addToCart(prod)}
+                      className={`font-bold text-xs px-3.5 py-2 rounded-xl transition-all shadow flex items-center gap-1 group/btn ${
+                        isInCart
+                          ? 'bg-emerald-100 hover:bg-red-50 dark:bg-emerald-950 dark:hover:bg-red-950/40 text-emerald-800 hover:text-red-650 dark:text-emerald-350 dark:hover:text-red-400 border border-emerald-250 dark:border-emerald-800'
+                          : 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                      }`}
+                    >
+                      {isInCart ? (
+                        <>
+                          <Check className="w-3.5 h-3.5 group-hover/btn:hidden" />
+                          <span className="group-hover/btn:hidden">No Carrinho</span>
+                          <span className="hidden group-hover/btn:inline">Remover</span>
+                        </>
+                      ) : (
+                        <>
+                          <ShoppingCart className="w-3.5 h-3.5" />
+                          <span>Comprar</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </main>

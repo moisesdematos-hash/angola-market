@@ -34,6 +34,7 @@ export interface Product {
     stock: number;
   }[];
   attributes?: Record<string, string>;
+  condition?: 'novo' | 'usado' | 'reciclado';
 }
 
 export interface Store {
@@ -287,7 +288,429 @@ export const MOCK_PRODUCTS: Product[] = [
       verified: true,
       score: 98,
       score_tier: "Excelente"
-    }
+    },
+    condition: "novo"
+  },
+  {
+    id: "prod-7",
+    slug: "gerador-de-energia-35kva-usado",
+    title: "Gerador a Gasolina 3.5 KVA - Usado (Bom Estado)",
+    description: "Gerador elétrico portátil com potência de 3.5 KVA. Ideal para pequenos comércios ou backup residencial. Totalmente revisionado pela nossa equipa de técnicos.",
+    price: 180000,
+    promotional_price: 165000,
+    category: "Ferramentas",
+    subcategory: "Geradores & Energia",
+    brand: "Outros",
+    images: [
+      "https://images.unsplash.com/photo-1597484211625-2431d87ed70f?w=800&auto=format&fit=crop&q=80"
+    ],
+    stock_quantity: 2,
+    province: "Benguela",
+    municipality: "Benguela",
+    rating_avg: 4.2,
+    reviews_count: 5,
+    sales_count: 14,
+    is_sponsored: false,
+    is_verified_seller: true,
+    seller: {
+      id: "store-2",
+      store_name: "Benguela Electro",
+      store_slug: "benguela-electro-loja",
+      verified: true,
+      score: 95,
+      score_tier: "Muito bom"
+    },
+    condition: "usado"
+  },
+  {
+    id: "prod-8",
+    slug: "mesa-cafe-paletes-recicladas-ecologica",
+    title: "Mesa de Café Ecológica de Paletes Recicladas",
+    description: "Mesa de centro rústica feita à mão em Luanda a partir de paletes de madeira recicladas e tratadas contra pragas. Acabamento em verniz ecológico. Apoie a sustentabilidade local!",
+    price: 45000,
+    category: "Casa",
+    subcategory: "Mobiliário",
+    brand: "Artesanal",
+    images: [
+      "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=800&auto=format&fit=crop&q=80"
+    ],
+    stock_quantity: 4,
+    province: "Luanda",
+    municipality: "Cazenga",
+    rating_avg: 4.7,
+    reviews_count: 8,
+    sales_count: 22,
+    is_sponsored: false,
+    is_verified_seller: false,
+    seller: {
+      id: "store-3",
+      store_name: "Kwanza Style Boutique",
+      store_slug: "huambo-boutique-moda",
+      verified: false,
+      score: 85,
+      score_tier: "Bom"
+    },
+    condition: "reciclado"
+  },
+  {
+    id: "prod-9",
+    slug: "hp-elitebook-840-g5-recondicionado",
+    title: "HP EliteBook 840 G5 Intel i5 8GB/256GB - Recondicionado (Usado)",
+    description: "Computador portátil profissional recondicionado de Grau A. Ecrã Full HD de 14 polegadas, processador Intel Core i5 de 8ª Geração, 8GB de RAM e 256GB SSD. Perfeito para trabalho e estudantes.",
+    price: 260000,
+    category: "Computadores",
+    subcategory: "Computadores Portáteis",
+    brand: "HP",
+    images: [
+      "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=800&auto=format&fit=crop&q=80"
+    ],
+    stock_quantity: 5,
+    province: "Luanda",
+    municipality: "Talatona",
+    rating_avg: 4.5,
+    reviews_count: 12,
+    sales_count: 31,
+    is_sponsored: false,
+    is_verified_seller: true,
+    seller: {
+      id: "store-1",
+      store_name: "Luanda Tech Center",
+      store_slug: "luanda-tech-center",
+      verified: true,
+      score: 98,
+      score_tier: "Excelente"
+    },
+    condition: "usado"
+  },
+  {
+    id: "prod-10",
+    slug: "vaso-ecologico-reciclado-de-pneus",
+    title: "Vaso Ecológico Decorativo de Pneus Reciclados",
+    description: "Vaso para jardim feito artesanalmente a partir de pneus de automóveis reutilizados e pintado à mão com tinta acrílica resistente às intempéries. Ideal para exterior.",
+    price: 15000,
+    category: "Casa",
+    subcategory: "Decoração",
+    brand: "Artesanal",
+    images: [
+      "https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=800&auto=format&fit=crop&q=80"
+    ],
+    stock_quantity: 15,
+    province: "Huambo",
+    municipality: "Huambo",
+    rating_avg: 4.6,
+    reviews_count: 4,
+    sales_count: 18,
+    is_sponsored: false,
+    is_verified_seller: false,
+    seller: {
+      id: "store-3",
+      store_name: "Kwanza Style Boutique",
+      store_slug: "huambo-boutique-moda",
+      verified: false,
+      score: 85,
+      score_tier: "Bom"
+    },
+    condition: "reciclado"
+  },
+  {
+    id: "prod-11",
+    slug: "coluna-bluetooth-jbl-charge-5",
+    title: "Coluna de Som Bluetooth JBL Charge 5 (Original)",
+    description: "Coluna de som portátil e impermeável com som Pro original da JBL, driver de longo alcance otimizado, tweeter separado e radiadores de graves duplos da JBL. Até 20 horas de reprodução.",
+    price: 125000,
+    category: "Tecnologia",
+    subcategory: "Áudio & Colunas",
+    brand: "JBL",
+    images: [
+      "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=800&auto=format&fit=crop&q=80"
+    ],
+    stock_quantity: 15,
+    province: "Luanda",
+    municipality: "Talatona",
+    rating_avg: 4.8,
+    reviews_count: 14,
+    sales_count: 55,
+    is_sponsored: false,
+    is_verified_seller: true,
+    seller: {
+      id: "store-1",
+      store_name: "Luanda Tech Center",
+      store_slug: "luanda-tech-center",
+      verified: true,
+      score: 98,
+      score_tier: "Excelente"
+    },
+    condition: "novo"
+  },
+  {
+    id: "prod-12",
+    slug: "camisa-polo-oficial-angola-algodao",
+    title: "Camisa Polo Oficial Angola 100% Algodão",
+    description: "Camisa polo premium com bordado de alta qualidade representando Angola. Tecido piquê de puro algodão super respirável e confortável.",
+    price: 25000,
+    category: "Moda",
+    subcategory: "Roupa Homem",
+    brand: "Estilo Luanda",
+    images: [
+      "https://images.unsplash.com/photo-1581655353564-df123a1eb820?w=800&auto=format&fit=crop&q=80"
+    ],
+    stock_quantity: 40,
+    province: "Luanda",
+    municipality: "Maianga",
+    rating_avg: 4.6,
+    reviews_count: 22,
+    sales_count: 110,
+    is_sponsored: false,
+    is_verified_seller: true,
+    seller: {
+      id: "store-3",
+      store_name: "Kwanza Style Boutique",
+      store_slug: "huambo-boutique-moda",
+      verified: true,
+      score: 92,
+      score_tier: "Muito bom"
+    },
+    condition: "novo"
+  },
+  {
+    id: "prod-13",
+    slug: "perfume-bleu-de-chanel-masculino-100ml",
+    title: "Perfume Bleu de Chanel Eau de Parfum Masculino 100ml",
+    description: "Perfume aromático amadeirado icónico para homens modernos. Uma fragrância atemporal e sofisticada com notas de citrinos frescos, cedro e sândalo de alta fixação.",
+    price: 185000,
+    category: "Beleza & Cuidados",
+    subcategory: "Perfumes & Fragrâncias",
+    brand: "Chanel",
+    images: [
+      "https://images.unsplash.com/photo-1541643600914-78b084683601?w=800&auto=format&fit=crop&q=80"
+    ],
+    stock_quantity: 8,
+    province: "Luanda",
+    municipality: "Ingombota",
+    rating_avg: 4.9,
+    reviews_count: 18,
+    sales_count: 45,
+    is_sponsored: true,
+    is_verified_seller: true,
+    seller: {
+      id: "store-3",
+      store_name: "Kwanza Style Boutique",
+      store_slug: "huambo-boutique-moda",
+      verified: true,
+      score: 92,
+      score_tier: "Muito bom"
+    },
+    condition: "novo"
+  },
+  {
+    id: "prod-14",
+    slug: "gps-rastreador-veiculos-automovel",
+    title: "GPS Rastreador Inteligente para Veículos Automóveis",
+    description: "Rastreador GPS de alta precisão em tempo real para viaturas e frotas. Alertas de ignição, velocidade e perímetro pelo telemóvel em Luanda.",
+    price: 65000,
+    category: "Automóvel",
+    subcategory: "Som & Eletrónica Auto",
+    brand: "TrackerPro",
+    images: [
+      "https://images.unsplash.com/photo-1524522173746-f628baad3644?w=800&auto=format&fit=crop&q=80"
+    ],
+    stock_quantity: 25,
+    province: "Luanda",
+    municipality: "Cazenga",
+    rating_avg: 4.5,
+    reviews_count: 9,
+    sales_count: 28,
+    is_sponsored: false,
+    is_verified_seller: true,
+    seller: {
+      id: "store-1",
+      store_name: "Luanda Tech Center",
+      store_slug: "luanda-tech-center",
+      verified: true,
+      score: 98,
+      score_tier: "Excelente"
+    },
+    condition: "novo"
+  },
+  {
+    id: "prod-15",
+    slug: "jogo-pastilhas-travao-hilux",
+    title: "Jogo de Pastilhas de Travão Toyota Hilux (Original)",
+    description: "Pastilhas de travão dianteiras genuínas de alta durabilidade e segurança para modelos Toyota Hilux. Fabricadas para a máxima eficiência de travagem em estradas mistas.",
+    price: 48000,
+    category: "Peças Auto & Moto",
+    subcategory: "Componentes de Motor & Travões",
+    brand: "Toyota",
+    images: [
+      "https://images.unsplash.com/photo-1486006920555-c77dce18193b?w=800&auto=format&fit=crop&q=80"
+    ],
+    stock_quantity: 12,
+    province: "Benguela",
+    municipality: "Lobito",
+    rating_avg: 4.7,
+    reviews_count: 14,
+    sales_count: 67,
+    is_sponsored: false,
+    is_verified_seller: true,
+    seller: {
+      id: "store-2",
+      store_name: "Benguela Electro",
+      store_slug: "benguela-electro-loja",
+      verified: true,
+      score: 95,
+      score_tier: "Muito bom"
+    },
+    condition: "novo"
+  },
+  {
+    id: "prod-16",
+    slug: "carrinho-bebe-reclinavel-amortecedores",
+    title: "Carrinho de Bebé Reclinável com Amortecedores",
+    description: "Carrinho de passeio ultra seguro e acolchoado com travão centralizado, capota extensível com proteção UV e suspensão nas quatro rodas para o máximo conforto do bebé.",
+    price: 155000,
+    category: "Crianças & Bebés",
+    subcategory: "Puericultura & Bebés",
+    brand: "BabySoft",
+    images: [
+      "https://images.unsplash.com/photo-1591085686350-798c0f9faf7c?w=800&auto=format&fit=crop&q=80"
+    ],
+    stock_quantity: 5,
+    province: "Huambo",
+    municipality: "Huambo",
+    rating_avg: 4.8,
+    reviews_count: 16,
+    sales_count: 24,
+    is_sponsored: false,
+    is_verified_seller: true,
+    seller: {
+      id: "store-3",
+      store_name: "Kwanza Style Boutique",
+      store_slug: "huambo-boutique-moda",
+      verified: true,
+      score: 92,
+      score_tier: "Muito bom"
+    },
+    condition: "novo"
+  },
+  {
+    id: "prod-17",
+    slug: "tapete-yoga-antiderrapante-6mm",
+    title: "Tapete de Yoga Antiderrapante Ecológico 6mm",
+    description: "Tapete de exercício fabricado em TPE ecológico, livre de toxinas e totalmente antiderrapante. Com espessura de 6mm para excelente amortecimento das articulações.",
+    price: 18000,
+    category: "Desporto & Lazer",
+    subcategory: "Fitness & Musculação",
+    brand: "FitPro",
+    images: [
+      "https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=800&auto=format&fit=crop&q=80"
+    ],
+    stock_quantity: 30,
+    province: "Luanda",
+    municipality: "Talatona",
+    rating_avg: 4.7,
+    reviews_count: 19,
+    sales_count: 82,
+    is_sponsored: false,
+    is_verified_seller: true,
+    seller: {
+      id: "store-1",
+      store_name: "Luanda Tech Center",
+      store_slug: "luanda-tech-center",
+      verified: true,
+      score: 98,
+      score_tier: "Excelente"
+    },
+    condition: "novo"
+  },
+  {
+    id: "prod-18",
+    slug: "cafe-ginga-grao-1kg",
+    title: "Café de Angola Ginga em Grão 1Kg (Robusta Premium)",
+    description: "Café genuíno de Angola, produzido nas terras férteis do Kwanza Sul. Grãos robusta de torra média selecionados à mão para um sabor forte, encorpado e aroma marcante.",
+    price: 8500,
+    category: "Alimentação & Bebidas",
+    subcategory: "Produtos Nacionais & Gourmet",
+    brand: "Ginga",
+    images: [
+      "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=800&auto=format&fit=crop&q=80"
+    ],
+    stock_quantity: 100,
+    province: "Luanda",
+    municipality: "Viana",
+    rating_avg: 4.9,
+    reviews_count: 54,
+    sales_count: 420,
+    is_sponsored: true,
+    is_verified_seller: true,
+    seller: {
+      id: "store-3",
+      store_name: "Kwanza Style Boutique",
+      store_slug: "huambo-boutique-moda",
+      verified: true,
+      score: 92,
+      score_tier: "Muito bom"
+    },
+    condition: "novo"
+  },
+  {
+    id: "prod-19",
+    slug: "servico-fretes-mudancas-luanda",
+    title: "Serviço de Fretes, Transportes e Mudanças Luanda",
+    description: "Serviço profissional de fretes e mudanças residenciais ou comerciais com carrinhas fechadas e ajudantes qualificados. Atendemos todas as províncias a partir de Luanda.",
+    price: 35000,
+    category: "Serviços",
+    subcategory: "Transportes & Logística",
+    brand: "Logística Nacional",
+    images: [
+      "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=800&auto=format&fit=crop&q=80"
+    ],
+    stock_quantity: 1,
+    province: "Luanda",
+    municipality: "Talatona",
+    rating_avg: 4.6,
+    reviews_count: 8,
+    sales_count: 15,
+    is_sponsored: false,
+    is_verified_seller: false,
+    seller: {
+      id: "store-1",
+      store_name: "Luanda Tech Center",
+      store_slug: "luanda-tech-center",
+      verified: false,
+      score: 90,
+      score_tier: "Muito bom"
+    },
+    condition: "novo"
+  },
+  {
+    id: "prod-20",
+    slug: "moedas-antigas-colecao-angola",
+    title: "Lote de Moedas Antigas de Angola de Colecionismo",
+    description: "Conjunto raro de moedas metálicas históricas de Angola colonial e primeiros anos da república. Peças autênticas e conservadas para colecionadores e entusiastas.",
+    price: 55000,
+    category: "Outros Produtos",
+    subcategory: "Diversos",
+    brand: "Colecionismo",
+    images: [
+      "https://images.unsplash.com/photo-1621972750749-0fbb1abb7736?w=800&auto=format&fit=crop&q=80"
+    ],
+    stock_quantity: 3,
+    province: "Huambo",
+    municipality: "Huambo",
+    rating_avg: 4.4,
+    reviews_count: 3,
+    sales_count: 7,
+    is_sponsored: false,
+    is_verified_seller: false,
+    seller: {
+      id: "store-3",
+      store_name: "Kwanza Style Boutique",
+      store_slug: "huambo-boutique-moda",
+      verified: false,
+      score: 85,
+      score_tier: "Bom"
+    },
+    condition: "usado"
   }
 ];
 

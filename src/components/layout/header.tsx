@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
@@ -33,6 +33,19 @@ export function Header({ onOpenAIShopping }: { onOpenAIShopping?: () => void }) 
   const router = useRouter();
   const { totalItemsCount } = useCart();
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Cart animation states
+  const [animateCart, setAnimateCart] = useState(false);
+  const prevCountRef = useRef(totalItemsCount);
+
+  useEffect(() => {
+    if (totalItemsCount !== prevCountRef.current) {
+      setAnimateCart(true);
+      const timer = setTimeout(() => setAnimateCart(false), 500);
+      prevCountRef.current = totalItemsCount;
+      return () => clearTimeout(timer);
+    }
+  }, [totalItemsCount]);
   const [selectedProvince, setSelectedProvince] = useState('Luanda');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
@@ -49,6 +62,16 @@ export function Header({ onOpenAIShopping }: { onOpenAIShopping?: () => void }) 
   const [notifications, setNotifications] = useState<PushNotificationPayload[]>([]);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [hasPermission, setHasPermission] = useState(false);
+
+  // Auto-close Category Dropdown after 5 seconds if left unattended
+  useEffect(() => {
+    if (categoryDropdownOpen) {
+      const timer = setTimeout(() => {
+        setCategoryDropdownOpen(false);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [categoryDropdownOpen]);
 
   useEffect(() => {
     // Check Supabase active session
@@ -362,10 +385,14 @@ export function Header({ onOpenAIShopping }: { onOpenAIShopping?: () => void }) 
 
             <Link
               href="/cart"
-              className="relative p-2 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              className={`relative p-2 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all ${
+                animateCart ? 'scale-125 rotate-12 text-emerald-600 dark:text-emerald-400' : ''
+              }`}
               aria-label="Carrinho"
             >
-              <ShoppingCart className="w-6 h-6 text-slate-800 dark:text-slate-100" />
+              <ShoppingCart className={`w-6 h-6 text-slate-800 dark:text-slate-100 transition-colors ${
+                animateCart ? 'text-emerald-600 dark:text-emerald-400' : ''
+              }`} />
               {totalItemsCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-amber-500 text-slate-950 font-bold text-[11px] w-5 h-5 rounded-full flex items-center justify-center shadow-md animate-bounce">
                   {totalItemsCount}
