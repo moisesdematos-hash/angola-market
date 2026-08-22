@@ -83,7 +83,7 @@ export default function CartPage() {
                   {/* Seller Items */}
                   <div className="space-y-4">
                     {group.items.map((item) => {
-                      const itemPrice = item.product.promotional_price || item.product.price;
+                      const itemPrice = item.customPrice || item.product.promotional_price || item.product.price;
                       return (
                         <div
                           key={`${item.product.id}-${item.variantId}`}

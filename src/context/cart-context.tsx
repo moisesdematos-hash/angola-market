@@ -8,11 +8,12 @@ export interface CartItem {
   variantId?: string;
   variantName?: string;
   quantity: number;
+  customPrice?: number;
 }
 
 interface CartContextType {
   items: CartItem[];
-  addToCart: (product: Product, quantity?: number, variantId?: string, variantName?: string) => void;
+  addToCart: (product: Product, quantity?: number, variantId?: string, variantName?: string, customPrice?: number) => void;
   removeFromCart: (productId: string, variantId?: string) => void;
   updateQuantity: (productId: string, quantity: number, variantId?: string) => void;
   clearCart: () => void;
@@ -45,7 +46,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   }, [items, isLoaded]);
 
-  const addToCart = (product: Product, quantity = 1, variantId?: string, variantName?: string) => {
+  const addToCart = (product: Product, quantity = 1, variantId?: string, variantName?: string, customPrice?: number) => {
     setItems((prev) => {
       const existingIndex = prev.findIndex(
         (item) => item.product.id === product.id && item.variantId === variantId
@@ -53,9 +54,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       if (existingIndex > -1) {
         const next = [...prev];
         next[existingIndex].quantity += quantity;
+        if (customPrice !== undefined) {
+          next[existingIndex].customPrice = customPrice;
+        }
         return next;
       }
-      return [...prev, { product, quantity, variantId, variantName }];
+      return [...prev, { product, quantity, variantId, variantName, customPrice }];
     });
   };
 
@@ -87,7 +91,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const totalItemsCount = items.reduce((acc, item) => acc + item.quantity, 0);
 
   const subtotalAmount = items.reduce((acc, item) => {
-    const itemPrice = item.product.promotional_price || item.product.price;
+    const itemPrice = item.customPrice || item.product.promotional_price || item.product.price;
     return acc + itemPrice * item.quantity;
   }, 0);
 

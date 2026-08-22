@@ -15,7 +15,9 @@ import {
   Award,
   ChevronRight,
   Share2,
-  MessageSquare
+  MessageSquare,
+  Sparkles,
+  X
 } from 'lucide-react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
@@ -28,6 +30,7 @@ export default function ProductDetailPage() {
   const router = useRouter();
   const { addToCart } = useCart();
   const [aiModalOpen, setAiModalOpen] = useState(false);
+  const [pechinchaModalOpen, setPechinchaModalOpen] = useState(false);
 
   const slug = typeof params.slug === 'string' ? params.slug : '';
   const product = MOCK_PRODUCTS.find((p) => p.slug === slug) || MOCK_PRODUCTS[0];
@@ -48,6 +51,69 @@ export default function ProductDetailPage() {
   const handleBuyNow = () => {
     addToCart(product, quantity, selectedVariant?.id, selectedVariant?.name);
     router.push('/checkout');
+  };
+
+  // Pechincha IA states
+  const [pechinchaMessages, setPechinchaMessages] = useState<Array<{ sender: 'user' | 'ia'; text: string }>>([
+    { sender: 'ia', text: `Olá! Sou o assistente de negociação do ${product.seller.store_name}. Tens boa lábia? Quanto gostarias de oferecer por este artigo?` }
+  ]);
+  const [offerInput, setOfferInput] = useState('');
+  const [negotiatedPrice, setNegotiatedPrice] = useState<number | null>(null);
+  const [bargainCompleted, setBargainCompleted] = useState(false);
+  const [negotiationAttempts, setNegotiationAttempts] = useState(0);
+
+  const handleSendOffer = (e: React.FormEvent) => {
+    e.preventDefault();
+    const offerValue = Number(offerInput.replace(/[^0-9]/g, ''));
+    if (isNaN(offerValue) || offerValue <= 0) {
+      alert('Por favor introduza um valor numérico válido.');
+      return;
+    }
+
+    const updatedMessages = [...pechinchaMessages, { sender: 'user' as const, text: `Ofereço ${formatKwanza(offerValue)}.` }];
+    setPechinchaMessages(updatedMessages);
+    setOfferInput('');
+
+    setTimeout(() => {
+      const minAcceptable = finalPrice * 0.8;
+      const fastAccept = finalPrice * 0.95;
+      
+      let reply = '';
+      if (offerValue < minAcceptable) {
+        if (negotiationAttempts === 0) {
+          reply = `Eia mano! ${formatKwanza(offerValue)} é muito baixo. Queres me falir? A praça está difícil! Sobe mais um bocado para fazermos negócio.`;
+          setNegotiationAttempts(1);
+        } else {
+          reply = `Ainda está muito curto, chefe. O preço mínimo que posso fazer para não ter prejuízo é ${formatKwanza(Math.floor(finalPrice * 0.88))}. O que achas?`;
+        }
+      } else if (offerValue >= fastAccept) {
+        reply = `Negócio fechado! Gostei da tua seriedade. Faço por ${formatKwanza(offerValue)}. Adiciona já ao carrinho!`;
+        setNegotiatedPrice(offerValue);
+        setBargainCompleted(true);
+      } else {
+        if (negotiationAttempts === 0) {
+          const counterOffer = Math.floor(finalPrice * 0.9);
+          reply = `Olha, tens boa lábia. Que tal dividirmos a diferença? Aceito fazer por ${formatKwanza(counterOffer)}. O que me diz?`;
+          setNegotiatedPrice(counterOffer);
+          setNegotiationAttempts(1);
+        } else {
+          reply = `Pronto, está bem! Aceito a tua oferta de ${formatKwanza(offerValue)}. Fechado por ti. Adiciona ao carrinho!`;
+          setNegotiatedPrice(offerValue);
+          setBargainCompleted(true);
+        }
+      }
+
+      setPechinchaMessages(prev => [...prev, { sender: 'ia' as const, text: reply }]);
+    }, 1000);
+  };
+
+  const handleAddNegotiatedToCart = () => {
+    if (negotiatedPrice) {
+      addToCart(product, quantity, selectedVariant?.id, selectedVariant?.name, negotiatedPrice);
+      setAddedToast(true);
+      setPechinchaModalOpen(false);
+      setTimeout(() => setAddedToast(false), 3000);
+    }
   };
 
   return (
@@ -221,20 +287,31 @@ export default function ProductDetailPage() {
                   </span>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <button
-                    onClick={handleAddToCart}
-                    className="w-full bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white font-bold text-sm py-3.5 rounded-2xl transition-all shadow flex items-center justify-center gap-2"
-                  >
-                    <ShoppingCart className="w-4 h-4" />
-                    <span>Adicionar ao Carrinho</span>
-                  </button>
+                <div className="flex flex-col gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <button
+                      onClick={handleAddToCart}
+                      className="w-full bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white font-bold text-sm py-3.5 rounded-2xl transition-all shadow flex items-center justify-center gap-2"
+                    >
+                      <ShoppingCart className="w-4 h-4" />
+                      <span>Adicionar ao Carrinho</span>
+                    </button>
+
+                    <button
+                      onClick={handleBuyNow}
+                      className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-sm py-3.5 rounded-2xl transition-all shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2"
+                    >
+                      <span>Comprar Agora</span>
+                    </button>
+                  </div>
 
                   <button
-                    onClick={handleBuyNow}
-                    className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-sm py-3.5 rounded-2xl transition-all shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2"
+                    type="button"
+                    onClick={() => setPechinchaModalOpen(true)}
+                    className="w-full bg-amber-500 hover:bg-amber-650 text-slate-950 font-extrabold text-xs py-3.5 rounded-2xl transition-all shadow-md flex items-center justify-center gap-2"
                   >
-                    <span>Comprar Agora</span>
+                    <Sparkles className="w-4 h-4 text-slate-950 animate-pulse" />
+                    <span>💬 Pechinchar (IA) — Negociar Desconto</span>
                   </button>
                 </div>
 
@@ -266,6 +343,88 @@ export default function ProductDetailPage() {
           </p>
         </div>
       </main>
+
+      {pechinchaModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/80 backdrop-blur-sm p-4">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-md shadow-2xl flex flex-col max-h-[85vh] animate-scale-in">
+            {/* Header */}
+            <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-amber-500/10 text-amber-500 flex items-center justify-center font-bold">
+                  <Sparkles className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="font-extrabold text-sm text-slate-900 dark:text-white">Pechinchar IA</h3>
+                  <p className="text-[10px] text-slate-500">{product.seller.store_name}</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setPechinchaModalOpen(false)}
+                className="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-850 text-slate-400"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Chat Body */}
+            <div className="flex-1 p-4 overflow-y-auto space-y-4 max-h-[45vh] bg-slate-50 dark:bg-slate-950/40 text-xs">
+              {pechinchaMessages.map((msg, idx) => (
+                <div key={idx} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+                  <div className={`p-3 rounded-2xl max-w-[85%] leading-relaxed ${
+                    msg.sender === 'user'
+                      ? 'bg-emerald-600 text-white rounded-tr-none'
+                      : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 rounded-tl-none'
+                  }`}>
+                    {msg.text}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Price reference info */}
+            <div className="px-4 py-2 bg-slate-100 dark:bg-slate-850/60 border-t border-slate-200/10 text-[10px] text-slate-500 flex justify-between">
+              <span>Preço Original: <strong>{formatKwanza(finalPrice)}</strong></span>
+              {negotiatedPrice && (
+                <span className="text-emerald-600 dark:text-emerald-400 font-bold">
+                  Preço Acordado: {formatKwanza(negotiatedPrice)}
+                </span>
+              )}
+            </div>
+
+            {/* Footer Form */}
+            <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-b-3xl">
+              {bargainCompleted ? (
+                <button
+                  type="button"
+                  onClick={handleAddNegotiatedToCart}
+                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs py-3.5 rounded-xl transition-all shadow flex items-center justify-center gap-2 animate-pulse"
+                >
+                  <ShoppingCart className="w-4 h-4" />
+                  <span>Adicionar com Desconto ({formatKwanza(negotiatedPrice!)})</span>
+                </button>
+              ) : (
+                <form onSubmit={handleSendOffer} className="flex gap-2">
+                  <input
+                    type="text"
+                    required
+                    value={offerInput}
+                    onChange={(e) => setOfferInput(e.target.value)}
+                    placeholder="Escreva a sua oferta (ex: 850000)"
+                    className="flex-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-xs outline-none focus:ring-2 focus:ring-amber-500 dark:text-white"
+                  />
+                  <button
+                    type="submit"
+                    className="bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold text-xs px-4 py-2.5 rounded-xl transition-all shadow"
+                  >
+                    Propor
+                  </button>
+                </form>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       <Footer />
       <AIShoppingModal isOpen={aiModalOpen} onClose={() => setAiModalOpen(false)} />

@@ -370,7 +370,7 @@ export default function CheckoutPage() {
                       {item.quantity}x {item.product.title}
                     </span>
                     <span className="font-bold text-slate-900 dark:text-white">
-                      {formatKwanza((item.product.promotional_price || item.product.price) * item.quantity)}
+                      {formatKwanza((item.customPrice || item.product.promotional_price || item.product.price) * item.quantity)}
                     </span>
                   </div>
                 ))}
