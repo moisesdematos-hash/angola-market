@@ -62,6 +62,10 @@ export default function ProductDetailPage() {
   const [bargainCompleted, setBargainCompleted] = useState(false);
   const [negotiationAttempts, setNegotiationAttempts] = useState(0);
 
+  // Referral states
+  const [referralBalance, setReferralBalance] = useState(0);
+  const [referralToast, setReferralToast] = useState(false);
+
   const handleSendOffer = (e: React.FormEvent) => {
     e.preventDefault();
     const offerValue = Number(offerInput.replace(/[^0-9]/g, ''));
@@ -341,6 +345,66 @@ export default function ProductDetailPage() {
           <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line">
             {product.description}
           </p>
+        </div>
+
+        {/* Partilha e Ganha Saldo */}
+        <div className="bg-slate-900 text-white p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-6 shadow-md relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl" />
+          
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <span className="bg-amber-500 text-slate-950 font-extrabold text-[9px] uppercase px-2 py-0.5 rounded-full flex items-center gap-1 w-fit shadow">
+                <Sparkles className="w-3 h-3" /> Programa de Indicação
+              </span>
+              <h3 className="text-lg font-extrabold text-white flex items-center gap-2">
+                📢 Partilha & Ganha Saldo Kwanza!
+              </h3>
+              <p className="text-xs text-slate-400 max-w-md font-medium">
+                Partilha este link com os teus kambas. Se algum deles comprar por ele, ambos recebem **2.000 Kz** na carteira Angola Market!
+              </p>
+            </div>
+
+            <div className="bg-slate-800/80 border border-slate-700/60 p-4 rounded-2xl text-center shrink-0">
+              <span className="text-[9px] uppercase font-bold text-slate-400">Teu Saldo Acumulado</span>
+              <div className="text-xl font-extrabold text-emerald-400 font-mono">
+                {formatKwanza(referralBalance)}
+              </div>
+              <span className="text-[9px] text-slate-400">Totalmente resgatável em compras</span>
+            </div>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-3">
+            <a
+              href={`https://api.whatsapp.com/send?text=${encodeURIComponent(
+                `Olha este artigo brutal no Angola Market: *${product.title}* por apenas *${formatKwanza(product.promotional_price || product.price)}*! Se comprares pelo meu link de indicação, ambos ganhamos 2.000 Kz de saldo imediato na carteira! Clica aqui para ver: https://angola-market-rho.vercel.app/product/${product.slug}?ref=AM-AO-${product.id.slice(0, 6)}`
+              )}`}
+              target="_blank"
+              rel="noreferrer"
+              className="bg-[#25D366] hover:bg-[#20ba5a] text-white font-extrabold text-xs px-5 py-3.5 rounded-xl transition-all shadow flex items-center justify-center gap-2 shrink-0 text-center"
+            >
+              <MessageSquare className="w-4 h-4 text-white" />
+              <span>Partilhar no WhatsApp Status</span>
+            </a>
+
+            <button
+              type="button"
+              onClick={() => {
+                const newBalance = referralBalance + 2000;
+                setReferralBalance(newBalance);
+                setReferralToast(true);
+                setTimeout(() => setReferralToast(false), 3000);
+              }}
+              className="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white font-bold text-xs px-5 py-3.5 rounded-xl transition-all flex items-center justify-center gap-1.5"
+            >
+              <span>🧪 Simular Compra de Kamba</span>
+            </button>
+          </div>
+
+          {referralToast && (
+            <div className="p-3 rounded-xl bg-emerald-600 text-white text-xs font-bold text-center animate-fade-in shadow-md">
+              🎉 Sucesso! O teu amigo Manuel comprou o artigo. Ganhaste 2.000 Kz de saldo Angola Market!
+            </div>
+          )}
         </div>
       </main>
 
